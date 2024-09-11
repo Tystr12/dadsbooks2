@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gråskjegg Bøker</title>
+    <link rel="icon" href="favicon-16x16.png" type="image/png">
+    
+    <!-- Link to Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
+    
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Velkommen til Gråskjegg Bøker</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#"><i class="fas fa-search"></i></a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact Us</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="jumbotron text-center">
+            <form class="form-inline my-2 my-lg-0" action="{% url 'index' %}" method="get">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+            
+            <h1 class="display-4">Velkommen til Gråskjegg Bøker</h1>
+            <a href="#" class="btn btn-primary btn-lg">Shop Now</a>
+        </section>
+        {% if books %}
+        <h2 class="text-center mb-4">Available Books</h2>
+        <div style="padding-left:5%; padding-right:5%;" class="row">
+
+           {% for book in books %} 
+           {% if book.book_available == True %}
+            
+                <div class="col-md-3">
+                    <div class="card mb-4">
+                        <img class="card-img-top" src="{{book.image_url}}" alt="Product 1" style="width:100%; height:20vw; object-fit:contain">
+                        <!--Figure out what object fit you want..-->
+                        <div class="card-body">
+                            <h5 class="card-title">{{book.title}} || {{book.author}}</h5>
+                            <p class="card-text" style="color:green; font-weight:bold;">{{book.price}} NOK</p>
+                            <a href="#" class="btn btn-primary">Buy Now</a>
+                        </div>
+                    </div>
+
+                </div>
+
+            
+        {% endif %} 
+        {% endfor %} 
+        </div>
+        {% else %}
+        <p>No books were found...</p>
+        {% endif %}
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+</head>
+<body>
+    <a href=http://127.0.0.1:8000/books/add>add book manually</a>
+  
+    <h4>Enter or scan barcode</h4>
+    <form action="" method="post" onsubmit="return confirm('Are you sure you want to add book?');">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+
+        
+
+    </form>
+</body>
+</html>
