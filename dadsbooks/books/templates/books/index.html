@@ -6,26 +6,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gråskjegg Bøker</title>
     <link rel="icon" href="favicon-16x16.png" type="image/png">
-    
+    <script src="script.js"></script>
     <!-- Link to Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
-    
+    <style>
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'Uncial Antiqua';
+        }
+        .nav-link {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'Uncial Antiqua';
+        }
+        .hide {
+            display: none;
+          }
+          
+        .show {
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">Velkommen til Gråskjegg Bøker</a>
+            <a class="navbar-brand" font-family="mythshire">
+                <img src="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon.png?raw=true" alt="Logo" width="50" height="50" class="d-inline-block align-top">
+                Gråskjegg Bøker
+            </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#"><i class="fas fa-search"></i></a>
+                        <form class="form-inline my-2 my-lg-0 hide" action="{% url 'index' %}" method="get">
+                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search"
+                            id="search">
+                            <!--<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+                        </form>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="" onclick="searchbar()"><i class="fas fa-search"></i></a>
                     </li>
                     <li class="nav-item active">
                         <a class="nav-link" href="#">Home</a>
@@ -37,7 +66,7 @@
                         <a class="nav-link" href="#">About Us</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contact Us</a>
+                        <a class="nav-link" href="#">Contact Me</a>
                     </li>
                 </ul>
             </div>
@@ -45,11 +74,7 @@
     </header>
     <main>
         <section class="jumbotron text-center">
-            <form class="form-inline my-2 my-lg-0" action="{% url 'index' %}" method="get">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-            
+            <img href="favicon.ico">
             <h1 class="display-4">Velkommen til Gråskjegg Bøker</h1>
             <a href="#" class="btn btn-primary btn-lg">Shop Now</a>
         </section>
