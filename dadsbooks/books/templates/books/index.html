@@ -6,7 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gråskjegg Bøker</title>
     <link rel="icon" href="favicon-16x16.png" type="image/png">
-    <script src="script.js"></script>
+    <script >
+        function searchbar() {
+            let text = document.getElementById("search");
+            let form = text.closest('form'); // Ensure you're toggling the form itself
+            form.classList.toggle("hide");
+            form.classList.toggle("show");
+            console.log("Triggered searchbar function.");
+        }
+    </script>
     <!-- Link to Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
@@ -14,12 +22,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
     <style>
-        .navbar-brand {
-            font-size: 24px;
-            font-weight: bold;
-            font-family: 'Uncial Antiqua';
-        }
-        .nav-link {
+        .fantasytext {
             font-size: 24px;
             font-weight: bold;
             font-family: 'Uncial Antiqua';
@@ -29,7 +32,7 @@
           }
           
         .show {
-            display: block;
+            display: inline-block;
         }
     </style>
 </head>
@@ -37,7 +40,7 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" font-family="mythshire">
+            <a class="navbar-brand fantasytext" font-family="mythshire">
                 <img src="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon.png?raw=true" alt="Logo" width="50" height="50" class="d-inline-block align-top">
                 Gråskjegg Bøker
             </a>
@@ -45,8 +48,8 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
+                <ul class="navbar-nav ml-auto fantasytext">
+                    <li class="nav-item active fantasytext">
                         <form class="form-inline my-2 my-lg-0 hide" action="{% url 'index' %}" method="get">
                             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search"
                             id="search">
@@ -54,7 +57,7 @@
                         </form>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="" onclick="searchbar()"><i class="fas fa-search"></i></a>
+                        <a class="nav-link" href="#" onclick="searchbar()"><i class="fas fa-search"></i></a>
                     </li>
                     <li class="nav-item active">
                         <a class="nav-link" href="#">Home</a>
@@ -75,11 +78,11 @@
     <main>
         <section class="jumbotron text-center">
             <img href="favicon.ico">
-            <h1 class="display-4">Velkommen til Gråskjegg Bøker</h1>
-            <a href="#" class="btn btn-primary btn-lg">Shop Now</a>
+            <h1 class="display-4 fantasytext">Velkommen til Gråskjegg Bøker</h1>
+            <a href="#" class="btn btn-primary btn-lg fantasytext">Shop Now</a>
         </section>
         {% if books %}
-        <h2 class="text-center mb-4">Available Books</h2>
+        <h2 class="text-center mb-4 fantasytext">Available Books</h2>
         <div style="padding-left:5%; padding-right:5%;" class="row">
 
            {% for book in books %} 
