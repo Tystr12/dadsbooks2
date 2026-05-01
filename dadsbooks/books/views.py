@@ -15,6 +15,11 @@ def clean_html(raw_html):
     if not raw_html:
         return ""
     return BeautifulSoup(raw_html, "html.parser").get_text(separator="\n").strip()
+    
+def home(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    return redirect("login")
 
 def index(request):
     search_query = request.GET.get('search', '')
