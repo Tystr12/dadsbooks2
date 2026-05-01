@@ -1,13 +1,23 @@
 from django import forms
+from django.forms import ModelForm
+from .models import Book
+
 
 class BarcodeForm(forms.Form):
-    barcode = forms.IntegerField(label='Barcode')
-    price = forms.FloatField(label='Price')
+    barcode = forms.CharField(label='Barcode', max_length=20)
 
-class BookForm(forms.Form):
-    title = forms.CharField(max_length=200)
-    author = forms.CharField(max_length=200)
-    description = forms.CharField(max_length=500)
-    price= forms.FloatField()
-    image_url = forms.CharField(max_length=2100)
-    book_available = forms.BooleanField()
+
+class BookForm(ModelForm):
+    class Meta:
+        model = Book
+        fields = [
+            "isbn",
+            "title",
+            "author",
+            "description",
+            "price",
+            "image_url",
+            "quantity",
+            "status",
+            "book_available",
+        ]

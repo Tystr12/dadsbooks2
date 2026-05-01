@@ -2,10 +2,23 @@
 
 {% block content %}
 
+<h1>Check book details before saving</h1>
+
 <style>
-    h1 {
-        margin-top: 0;
-        margin-bottom: 24px;
+    .book-layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 32px;
+        align-items: start;
+    }
+
+    .cover {
+        width: 100%;
+        max-height: 330px;
+        object-fit: contain;
+        border-radius: 8px;
+        background: #eee;
+        border: 1px solid #ddd;
     }
 
     form p {
@@ -21,8 +34,7 @@
     input[type="text"],
     input[type="number"],
     input[type="url"],
-    textarea,
-    select {
+    textarea {
         width: 100%;
         box-sizing: border-box;
         padding: 10px 12px;
@@ -67,20 +79,24 @@
     }
 </style>
 
-<h1>Add book manually</h1>
+<div class="book-layout">
+    <div>
+        {% if form.image_url.value %}
+            <img class="cover" src="{{ form.image_url.value }}" alt="Book cover">
+        {% else %}
+            <p>No cover image found.</p>
+        {% endif %}
+    </div>
 
-{% if user.is_superuser %}
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
 
         <div class="buttons">
-            <button type="submit">Save book</button>
+            <button type="submit" name="confirm_save">Save book</button>
             <a class="cancel" href="{% url 'search' %}">Cancel</a>
         </div>
     </form>
-{% else %}
-    <p>You are not logged in as admin.</p>
-{% endif %}
+</div>
 
 {% endblock %}

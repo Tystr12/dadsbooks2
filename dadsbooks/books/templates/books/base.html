@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gråskjegg Bøker</title>
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon.png?raw=true"
+        type="image/png">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <style>
+        body {
+            background: #f4f6f8;
+            margin: 0;
+            color: #222;
+        }
+
+        .fantasytext {
+            font-family: 'Uncial Antiqua', cursive;
+        }
+
+        .navbar {
+            padding: 12px 24px;
+        }
+
+        .navbar-brand {
+            font-size: 20px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .container-box {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 🔥 Clean navbar -->
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand fantasytext" href="{% url 'dashboard' %}">
+            <img src="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon.png?raw=true"
+                width="40" height="40" class="d-inline-block align-top">
+            Gråskjegg Bøker
+        </a>
+
+        <div>
+            <a class="btn btn-outline-primary" href="{% url 'dashboard' %}">Dashboard</a>
+            <a class="btn btn-outline-primary" href="{% url 'search' %}">Scan ISBN</a>
+            <a class="btn btn-outline-primary" href="{% url 'add' %}">Add book</a>
+            <a class="btn btn-outline-secondary" href="/admin/">Admin</a>
+        </div>
+    </nav>
+
+    <div class="content">
+        <div class="container-box">
+            {% if messages %}
+            {% for message in messages %}
+            <div style="
+            margin: 20px auto;
+            max-width: 1000px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        ">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+</body>
+
+</html>
