@@ -33,7 +33,7 @@ def index(request):
 
 def search(request):
     if not request.user.is_superuser:
-        return redirect("dashboard")
+        return redirect("login")
 
     if request.method == "POST":
         barcode_form = BarcodeForm(request.POST)
@@ -91,7 +91,7 @@ def search(request):
     
 def add(request):
     if not request.user.is_superuser:
-        return redirect("dashboard")
+        return redirect("login")
 
     if request.method == "POST":
         form = BookForm(request.POST)
@@ -123,7 +123,7 @@ def add(request):
 
 def dashboard(request):
     if not request.user.is_superuser:
-        return redirect('/index/')
+        return redirect('login')
 
     search_query = request.GET.get("search", "")
     status_filter = request.GET.get("status", "")
