@@ -28,7 +28,7 @@ ISBNDB_API_KEY = os.getenv("ISBNDB_API_KEY")
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--u*&wg0z*a4$#^$o+22dcbb_ke9zbu7%&yz7#1*o75!0z_vm2z'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
