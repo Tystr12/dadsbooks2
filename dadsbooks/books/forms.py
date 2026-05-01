@@ -4,7 +4,7 @@ from .models import Book
 
 
 class BarcodeForm(forms.Form):
-    barcode = forms.CharField(label='Barcode', max_length=20)
+    barcode = forms.CharField(label='Barcode', max_length=20, widget=forms.TextInput(attrs={"autofocus": True}))
 
 
 class BookForm(ModelForm):

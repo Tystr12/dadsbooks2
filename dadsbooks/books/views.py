@@ -28,23 +28,29 @@ def index(request):
 
 def search(request):
     if not request.user.is_superuser:
-        books = Book.objects.all()
-        return render(request, 'books/index.html', {
-            'errormsg': NOT_ADMIN_MESSAGE,
-            'books': books
-        })
+        return redirect("dashboard")
 
     if request.method == "POST":
-        if "confirm_save" in request.POST:
-            form = BookForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('/dashboard/')
-
         barcode_form = BarcodeForm(request.POST)
-        if barcode_form.is_valid():
-            barcode = barcode_form.cleaned_data["barcode"]
 
+        if barcode_form.is_valid():
+            barcode = str(barcode_form.cleaned_data["barcode"]).strip()
+
+            # Check database first, no API token wasted
+            existing_book = Book.objects.filter(isbn=barcode).first()
+
+            if existing_book:
+                existing_book.quantity += 1
+                existing_book.save()
+
+                messages.success(
+                    request,
+                    f"{existing_book.title} already exists. Quantity updated to {existing_book.quantity}."
+                )
+
+                return redirect("dashboard")
+
+            # Only use API if book is not already in database
             h = {"Authorization": settings.ISBNDB_API_KEY}
             url = f"https://api2.isbndb.com/book/{barcode}"
             response = requests.get(url, headers=h)
@@ -80,28 +86,35 @@ def search(request):
     
 def add(request):
     if not request.user.is_superuser:
-        books = Book.objects.all()
-        return render(request, 'books/index.html', {
-            'errormsg': NOT_ADMIN_MESSAGE,
-            'books': books
-        })
+        return redirect("dashboard")
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = BookForm(request.POST)
+
         if form.is_valid():
             new_book = form.save(commit=False)
 
-            existing_book = Book.objects.filter(isbn=new_book.isbn).first()
+            existing_book = None
+            if new_book.isbn:
+                existing_book = Book.objects.filter(isbn=new_book.isbn).first()
 
             if existing_book:
                 existing_book.quantity += new_book.quantity
                 existing_book.save()
-                messages.success(request, f"Book already existed. Quantity updated to {existing_book.quantity}.")
-    else:
-        new_book.save()
-        messages.success(request, "Book added successfully!")
+                messages.success(
+                    request,
+                    f"Book already existed. Quantity updated to {existing_book.quantity}."
+                )
+            else:
+                new_book.save()
+                messages.success(request, "Book added successfully!")
 
-    return redirect("dashboard")
+            return redirect("dashboard")
+
+    else:
+        form = BookForm()
+
+    return render(request, "books/add.html", {"form": form})
 
 def dashboard(request):
     if not request.user.is_superuser:
