@@ -8,8 +8,33 @@ import jsonpickle
 from bs4 import BeautifulSoup
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 
 NOT_ADMIN_MESSAGE = 'You are not logged in as admin'
+
+def check_if_book_exists_in_database(barcode):
+    existing_book = Book.objects.filter(isbn=barcode).first()
+    return existing_book
+
+def get_book_data_from_isbn(barcode):
+    h = {"Authorization": settings.ISBNDB_API_KEY}
+    url = f"https://api2.isbndb.com/book/{barcode}"
+    response = requests.get(url, headers=h)
+    response.raise_for_status()
+
+    result = response.json()["book"]
+
+    return {
+        "isbn": barcode,
+        "title": result.get("title_long") or result.get("title") or "",
+        "author": ", ".join(result.get("authors", [])),
+        "description": clean_html(result.get("synopsis") or ""),
+        "price": None,
+        "image_url": result.get("image") or "",
+        "quantity": 1,
+        "status": "in_stock",
+        "book_available": True,
+    }
 
 def clean_html(raw_html):
     if not raw_html:
@@ -152,3 +177,114 @@ def dashboard(request):
         "status_filter": status_filter,
     })
     
+def quick_add(request):
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    if request.method == "POST":
+        barcode_form = BarcodeForm(request.POST)
+
+        if barcode_form.is_valid():
+            barcode = str(barcode_form.cleaned_data["barcode"]).strip()
+
+            existing_book = Book.objects.filter(isbn=barcode).first()
+
+            if existing_book:
+                existing_book.quantity += 1
+                existing_book.status = "in_stock"
+                existing_book.book_available = True
+                existing_book.save()
+
+                messages.success(
+                    request,
+                    f"{existing_book.title} already exists. Quantity updated to {existing_book.quantity}."
+                )
+                return redirect("quick_add")
+
+            data = get_book_data_from_isbn(barcode)
+            Book.objects.create(**data)
+
+            messages.success(request, f"{data['title']} added successfully.")
+            return redirect("quick_add")
+
+    else:
+        barcode_form = BarcodeForm()
+
+    return render(request, "books/quick_add.html", {
+        "form": barcode_form
+    })
+    
+def remove_by_isbn(request):
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    if request.method == "POST":
+        barcode_form = BarcodeForm(request.POST)
+
+        if barcode_form.is_valid():
+            barcode = str(barcode_form.cleaned_data["barcode"]).strip()
+            book = Book.objects.filter(isbn=barcode).first()
+
+            if not book:
+                messages.error(request, "No book with that ISBN was found.")
+                return redirect("remove_by_isbn")
+
+            if book.quantity > 0:
+                book.quantity -= 1
+
+            if book.quantity == 0:
+                book.status = "sold"
+                book.book_available = False
+
+            book.save()
+
+            messages.success(
+                request,
+                f"Removed one copy of {book.title}. Quantity is now {book.quantity}."
+            )
+
+            return redirect("remove_by_isbn")
+
+    else:
+        barcode_form = BarcodeForm()
+
+    return render(request, "books/remove_by_isbn.html", {
+        "form": barcode_form
+    })
+    
+
+
+def edit_book(request, book_id):
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    book = get_object_or_404(Book, id=book_id)
+
+    if request.method == "POST":
+        if "delete_one" in request.POST:
+            if book.quantity > 1:
+                book.quantity -= 1
+                book.save()
+                messages.success(request, f"Removed one copy. Quantity is now {book.quantity}.")
+            else:
+                book.delete()
+                messages.success(request, "Book deleted.")
+            return redirect("dashboard")
+
+        if "delete_all" in request.POST:
+            book.delete()
+            messages.success(request, "Book deleted completely.")
+            return redirect("dashboard")
+
+        form = BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Book updated successfully.")
+            return redirect("dashboard")
+    else:
+        form = BookForm(instance=book)
+
+    return render(request, "books/edit_book.html", {
+        "form": form,
+        "book": book
+    })

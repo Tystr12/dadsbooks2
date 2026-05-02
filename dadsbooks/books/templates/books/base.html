@@ -70,6 +70,8 @@
             <a class="btn btn-outline-primary" href="{% url 'search' %}">Scan ISBN</a>
             <a class="btn btn-outline-primary" href="{% url 'add' %}">Add book</a>
             <a class="btn btn-outline-secondary" href="/admin/">Admin</a>
+            <a class="btn btn-outline-primary" href="{% url 'quick_add' %}">Quick add</a>
+            <a class="btn btn-outline-danger" href="{% url 'remove_by_isbn' %}">Remove Book</a>
             <a class="btn btn-outline-danger" href="{% url 'logout' %}">Logout</a>
             {% else %}
             <a class="btn btn-outline-primary" href="{% url 'login' %}">Login</a>

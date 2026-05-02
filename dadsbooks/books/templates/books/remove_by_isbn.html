@@ -1,0 +1,22 @@
+{% extends "books/base.html" %}
+
+{% block content %}
+
+<h1>Remove book by ISBN</h1>
+
+<p>Scan or enter an ISBN to remove one copy from stock.</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <p>
+        <label>Barcode / ISBN:</label>
+        {{ form.barcode }}
+    </p>
+
+    <button type="submit">Remove one copy</button>
+</form>
+
+<a href="{% url 'dashboard' %}">Back to dashboard</a>
+
+{% endblock %}
