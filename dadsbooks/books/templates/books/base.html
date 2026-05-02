@@ -2,6 +2,11 @@
 <html lang="en">
 
 <head>
+    <script>
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gråskjegg Bøker</title>
@@ -21,10 +26,60 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <style>
+        .candle {
+            position: relative;
+            display: inline-block;
+            width: 14px;
+            height: 28px;
+            margin-left: 10px;
+            background: #eaf371;
+            border-radius: 3px;
+            vertical-align: middle;
+            box-shadow: inset 0 -4px 0 #d1d5db;
+        }
+
+        .candle::before {
+            content: "";
+            position: absolute;
+            top: -18px;
+            left: 3px;
+            width: 8px;
+            height: 16px;
+            background: radial-gradient(circle at 50% 65%, #fff7ad 0%, #facc15 35%, #f97316 70%);
+            border-radius: 50% 50% 45% 45%;
+            animation: flicker 0.18s infinite alternate;
+            transform-origin: bottom center;
+            filter: drop-shadow(0 0 8px #f59e0b);
+        }
+
+        .candle::after {
+            content: "";
+            position: absolute;
+            top: -4px;
+            left: 6px;
+            width: 2px;
+            height: 7px;
+            background: #111827;
+            border-radius: 2px;
+        }
+
+        @keyframes flicker {
+            from {
+                transform: scale(1) rotate(-2deg);
+                opacity: 0.85;
+            }
+
+            to {
+                transform: scale(1.12) rotate(3deg);
+                opacity: 1;
+            }
+        }
+
         body {
             background: #f4f6f8;
-            margin: 0;
             color: #222;
+            transition: all 0.2s ease;
+            margin: 0;
         }
 
         .fantasytext {
@@ -51,17 +106,116 @@
             border-radius: 12px;
             box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
         }
+
+        .container-box {
+            background: white;
+            color: #222;
+        }
+
+        /* 🌙 DARK MODE */
+        html.dark body {
+            background: #121212;
+            color: #e5e7eb;
+        }
+
+        html.dark .container-box {
+            background: #1f2937;
+            color: #e5e7eb;
+        }
+
+        html.dark .navbar {
+            background: #1f2937 !important;
+        }
+
+        html.dark table {
+            color: #e5e7eb;
+        }
+
+        html.dark th {
+            background: #374151;
+        }
+
+        html.dark td {
+            border-color: #374151;
+        }
+
+        html.dark input,
+        html.dark select,
+        html.dark textarea {
+            background: #374151;
+            color: white;
+            border: 1px solid #4b5563;
+        }
+
+        html.dark a {
+            color: #93c5fd;
+        }
+
+        html.dark .container {
+            background: #1e293b;
+            color: #e5e7eb;
+        }
+
+        html.dark .container h1,
+        html.dark .container td,
+        html.dark .container th {
+            color: #e5e7eb;
+        }
+
+        html.dark .container table {
+            color: #e5e7eb;
+        }
+
+        html.dark .container th {
+            background: #334155;
+        }
+
+        html.dark .container td {
+            border-bottom: 1px solid #475569;
+        }
+
+        html.dark .navbar-brand,
+        html.dark .navbar-brand:hover,
+        html.dark .fantasytext {
+            color: #e5e7eb !important;
+        }
     </style>
+    <script>
+        function applyThemeIcon() {
+            const btn = document.getElementById("themeBtn");
+            if (!btn) return;
+
+            if (document.documentElement.classList.contains("dark")) {
+                btn.innerHTML = "☀️";
+            } else {
+                btn.innerHTML = "🌙";
+            }
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle("dark");
+
+            if (document.documentElement.classList.contains("dark")) {
+                localStorage.setItem("theme", "dark");
+            } else {
+                localStorage.setItem("theme", "light");
+            }
+
+            applyThemeIcon();
+        }
+
+        document.addEventListener("DOMContentLoaded", applyThemeIcon);
+    </script>
 </head>
 
-<body>
+<body id="body">
 
     <!-- 🔥 Clean navbar -->
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand fantasytext" href="{% url 'dashboard' %}">
             <img src="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon.png?raw=true"
                 width="40" height="40" class="d-inline-block align-top">
-            Gråskjegg Bøker
+            Gråskjegg Bøker <span class="candle"></span>
         </a>
 
         <div>
@@ -76,6 +230,9 @@
             {% else %}
             <a class="btn btn-outline-primary" href="{% url 'login' %}">Login</a>
             {% endif %}
+            <button onclick="toggleTheme()" id="themeBtn" class="btn btn-outline-dark">
+                🌙
+            </button>
         </div>
     </nav>
 

@@ -16,6 +16,33 @@ def check_if_book_exists_in_database(barcode):
     existing_book = Book.objects.filter(isbn=barcode).first()
     return existing_book
 
+def get_google_books_rating(isbn):
+    url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
+
+    try:
+        response = requests.get(url, timeout=5)
+
+        if response.status_code != 200:
+            print(f"Google Books failed: {response.status_code}")
+            return None, None
+
+        data = response.json()
+        items = data.get("items", [])
+
+        if not items:
+            return None, None
+
+        volume_info = items[0].get("volumeInfo", {})
+
+        return (
+            volume_info.get("averageRating"),
+            volume_info.get("ratingsCount"),
+        )
+
+    except requests.RequestException as e:
+        print(f"Google Books request failed: {e}")
+        return None, None
+    
 def get_book_data_from_isbn(barcode):
     h = {"Authorization": settings.ISBNDB_API_KEY}
     url = f"https://api2.isbndb.com/book/{barcode}"
@@ -85,7 +112,8 @@ def search(request):
             url = f"https://api2.isbndb.com/book/{barcode}"
             response = requests.get(url, headers=h)
             response.raise_for_status()
-
+            average_rating, ratings_count = get_google_books_rating(barcode)
+            print(average_rating, ratings_count)
             result = response.json()["book"]
 
             initial_data = {
