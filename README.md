@@ -69,3 +69,28 @@ python manage.py migrate
 
 # Start server
 python manage.py runserver
+
+```
+---
+## 🌐 Usage
+
+Once the development server is running, you can access the app at:
+
+- **Homepage (admin dashboard):**  
+  http://localhost:8000/
+  
+  If logged in as superuser go to dashboard, if not login page.
+
+- **Admin / Dashboard:**  
+  http://localhost:8000/dashboard/
+
+- **Django Admin Panel:**  
+  http://localhost:8000/admin/
+
+- **Shop page (NOT FINISHED)**  
+  http://localhost:8000/shop/
+
+> Note: Make sure to create a superuser to access admin features:
+> ```bash
+> python manage.py createsuperuser
+> ```
