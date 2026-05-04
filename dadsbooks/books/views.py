@@ -71,17 +71,27 @@ def clean_html(raw_html):
 def home(request):
     if request.user.is_authenticated:
         return redirect("dashboard")
-    return redirect("login")
+    return redirect("shop")
 
 def index(request):
-    search_query = request.GET.get('search', '')
-    if search_query:
-        books = Book.objects.filter(title__icontains=search_query) | Book.objects.filter(author__icontains=search_query)
-    else:
-        books = Book.objects.all()
-    context = {'books': books}
-    return render(request, 'books/index.html', context)
+    search_query = request.GET.get("search", "")
 
+    books = Book.objects.filter(book_available=True).order_by("title")
+
+    if search_query:
+        books = books.filter(title__icontains=search_query) | books.filter(author__icontains=search_query)
+
+    paginator = Paginator(books, 12)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "books": page_obj,
+        "page_obj": page_obj,
+        "search_query": search_query,
+    }
+
+    return render(request, "books/index.html", context)
 
 def search(request):
     if not request.user.is_superuser:
@@ -176,7 +186,7 @@ def add(request):
 
 def dashboard(request):
     if not request.user.is_superuser:
-        return redirect('login')
+        return redirect("login")
 
     search_query = request.GET.get("search", "")
     status_filter = request.GET.get("status", "")

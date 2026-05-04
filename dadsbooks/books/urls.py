@@ -11,7 +11,7 @@ urlpatterns = [
     path('search/', views.search,name="search"),
     path('add/', views.add, name='add'),
     path("dashboard/", views.dashboard, name="dashboard"),
-    path("shop", views.index, name="index"),
+    path("shop/", views.index, name="shop"),
     
     path("quick-add/", views.quick_add, name="quick_add"),
     path("remove-isbn/", views.remove_by_isbn, name="remove_by_isbn"),

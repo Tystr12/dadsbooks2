@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gråskjegg Bøker</title>
     <link rel="icon" href="favicon-16x16.png" type="image/png">
-    <script >
+    <script>
+        if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    </script>
+
+    <script>
         function searchbar() {
             let text = document.getElementById("search");
             let form = text.closest('form'); // Ensure you're toggling the form itself
@@ -18,41 +24,231 @@
     <!-- Link to Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
+        html.dark main {
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        html.dark .jumbotron {
+            background: #1e293b;
+            color: #e5e7eb;
+        }
+
+        html.dark .card {
+            background: #1f2937;
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+
+        html.dark .card-title {
+            color: #e5e7eb;
+        }
+
+        html.dark .card-body {
+            background: #1f2937;
+        }
+
+        html.dark .navbar-light .navbar-nav .nav-link {
+            color: #e5e7eb !important;
+        }
+
+        html.dark .navbar-light .navbar-nav .nav-link:hover {
+            color: #93c5fd !important;
+        }
+
+        html.dark .btn-outline-dark {
+            color: #e5e7eb;
+            border-color: #e5e7eb;
+        }
+
         .fantasytext {
             font-size: 24px;
             font-weight: bold;
             font-family: 'Uncial Antiqua';
         }
+
         .hide {
             display: none;
-          }
-          
+        }
+
         .show {
             display: inline-block;
         }
+
+        .candle {
+            position: relative;
+            display: inline-block;
+            width: 14px;
+            height: 28px;
+            margin-left: 10px;
+            background: #eaf371;
+            border-radius: 3px;
+            vertical-align: middle;
+            box-shadow: inset 0 -4px 0 #d1d5db;
+            margin-top: 10px;
+        }
+
+        .candle::before {
+            content: "";
+            position: absolute;
+            top: -18px;
+            left: 3px;
+            width: 8px;
+            height: 16px;
+            background: radial-gradient(circle at 50% 65%, #fff7ad 0%, #facc15 35%, #f97316 70%);
+            border-radius: 50% 50% 45% 45%;
+            animation: flicker 1.6s infinite ease-in-out;
+            transform-origin: bottom center;
+            filter: drop-shadow(0 0 8px #f59e0b);
+        }
+
+        .candle::after {
+            content: "";
+            position: absolute;
+            top: -4px;
+            left: 6px;
+            width: 2px;
+            height: 7px;
+            background: #111827;
+            border-radius: 2px;
+        }
+
+        @keyframes flicker {
+            0% {
+                transform: scale(1) rotate(-1deg);
+                opacity: 0.9;
+            }
+
+            50% {
+                transform: scale(1.08) rotate(1deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.02) rotate(-1deg);
+                opacity: 0.95;
+            }
+        }
+
+        /* 🌙 DARK MODE */
+        html.dark body {
+            background: #121212;
+            color: #e5e7eb;
+        }
+
+        html.dark .container-box {
+            background: #1f2937;
+            color: #e5e7eb;
+        }
+
+        html.dark .navbar {
+            background: #1f2937 !important;
+        }
+
+        html.dark table {
+            color: #e5e7eb;
+        }
+
+        html.dark th {
+            background: #374151;
+        }
+
+        html.dark td {
+            border-color: #374151;
+        }
+
+        html.dark input,
+        html.dark select,
+        html.dark textarea {
+            background: #374151;
+            color: white;
+            border: 1px solid #4b5563;
+        }
+
+        html.dark a {
+            color: #93c5fd;
+        }
+
+        html.dark .container {
+            background: #1e293b;
+            color: #e5e7eb;
+        }
+
+        html.dark .container h1,
+        html.dark .container td,
+        html.dark .container th {
+            color: #e5e7eb;
+        }
+
+        html.dark .container table {
+            color: #e5e7eb;
+        }
+
+        html.dark .container th {
+            background: #334155;
+        }
+
+        html.dark .container td {
+            border-bottom: 1px solid #475569;
+        }
+
+        html.dark .navbar-brand,
+        html.dark .navbar-brand:hover,
+        html.dark .fantasytext {
+            color: #e5e7eb !important;
+        }
     </style>
+
+    <script>
+        function applyThemeIcon() {
+            const btn = document.getElementById("themeBtn");
+            if (!btn) return;
+
+            if (document.documentElement.classList.contains("dark")) {
+                btn.innerHTML = "☀️";
+            } else {
+                btn.innerHTML = "🌙";
+            }
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle("dark");
+
+            if (document.documentElement.classList.contains("dark")) {
+                localStorage.setItem("theme", "dark");
+            } else {
+                localStorage.setItem("theme", "light");
+            }
+
+            applyThemeIcon();
+        }
+
+        document.addEventListener("DOMContentLoaded", applyThemeIcon);
+    </script>
 </head>
 
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand fantasytext" font-family="mythshire">
-                <img src="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon.png?raw=true" alt="Logo" width="50" height="50" class="d-inline-block align-top">
-                Gråskjegg Bøker
+                <img src="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon.png?raw=true"
+                    alt="Logo" width="50" height="50" class="d-inline-block align-top">
+                Gråskjegg Bøker <span class="candle"></span>
             </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto fantasytext">
                     <li class="nav-item active fantasytext">
-                        <form class="form-inline my-2 my-lg-0 hide" action="{% url 'index' %}" method="get">
-                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search"
-                            id="search">
+                        <form class="form-inline my-2 my-lg-0 hide" method="get">
+                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"
+                                name="search" id="search">
                             <!--<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
                         </form>
                     </li>
@@ -71,6 +267,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Contact Me</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Admin</a>
+                    </li>
+                    <button onclick="toggleTheme()" id="themeBtn" class="btn btn-outline-dark">
+                        🌙
+                    </button>
                 </ul>
             </div>
         </nav>
@@ -85,26 +287,53 @@
         <h2 class="text-center mb-4 fantasytext">Available Books</h2>
         <div style="padding-left:5%; padding-right:5%;" class="row">
 
-           {% for book in books %} 
-           {% if book.book_available == True %}
-            
-                <div class="col-md-3">
-                    <div class="card mb-4">
-                        <img class="card-img-top" src="{{book.image_url}}" alt="Product 1" style="width:100%; height:20vw; object-fit:contain">
-                        <!--Figure out what object fit you want..-->
-                        <div class="card-body">
-                            <h5 class="card-title">{{book.title}} || {{book.author}}</h5>
-                            <p class="card-text" style="color:green; font-weight:bold;">{{book.price}} NOK</p>
-                            <a href="#" class="btn btn-primary">Buy Now</a>
-                        </div>
-                    </div>
+            {% for book in books %}
+            {% if book.book_available == True %}
 
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="{{book.image_url}}" alt="Product 1"
+                        style="width:100%; height:20vw; object-fit:contain">
+                    <!--Figure out what object fit you want..-->
+                    <div class="card-body">
+                        <h5 class="card-title">{{book.title}} || {{book.author}}</h5>
+                        <p class="card-text" style="color:green; font-weight:bold;">{{book.price}} NOK</p>
+                        <a href="#" class="btn btn-primary">Buy Now</a>
+                    </div>
                 </div>
 
-            
-        {% endif %} 
-        {% endfor %} 
+            </div>
+
+
+            {% endif %}
+            {% endfor %}
         </div>
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Book pagination">
+            <ul class="pagination justify-content-center mt-4">
+
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?search={{ search_query }}&page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?search={{ search_query }}&page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                {% endif %}
+
+            </ul>
+        </nav>
+        {% endif %}
         {% else %}
         <p>No books were found...</p>
         {% endif %}
