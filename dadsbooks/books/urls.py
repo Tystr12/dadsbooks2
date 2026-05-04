@@ -17,4 +17,5 @@ urlpatterns = [
     path("remove-isbn/", views.remove_by_isbn, name="remove_by_isbn"),
     path("book/<int:book_id>/edit/", views.edit_book, name="edit_book"),
     path("mobile-scan/", views.mobile_scan, name="mobile_scan"),
+    path("mobile-search/", views.mobile_search, name="mobile_search"),
 ]

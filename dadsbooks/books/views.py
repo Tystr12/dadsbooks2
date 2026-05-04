@@ -368,3 +368,44 @@ def mobile_scan(request):
     return render(request, "books/mobile_scan.html", {
         "form": barcode_form
     })
+    
+def mobile_search(request):
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    if request.method == "POST":
+        barcode_form = BarcodeForm(request.POST)
+
+        if barcode_form.is_valid():
+            barcode = str(barcode_form.cleaned_data["barcode"]).strip()
+
+            existing_book = Book.objects.filter(isbn=barcode).first()
+
+            if existing_book:
+                messages.info(
+                    request,
+                    f"{existing_book.title} already exists. Current quantity: {existing_book.quantity}."
+                )
+                return redirect("edit_book", book_id=existing_book.id)
+
+            try:
+                data = get_book_data_from_isbn(barcode)
+                book_form = BookForm(initial=data)
+
+                return render(request, "books/confirm_book.html", {
+                    "form": book_form
+                })
+
+            except requests.RequestException:
+                messages.error(request, "Could not fetch book data. Please try again or add the book manually.")
+            except KeyError:
+                messages.error(request, "No book data found for that ISBN.")
+
+            return redirect("mobile_search")
+
+    else:
+        barcode_form = BarcodeForm()
+
+    return render(request, "books/mobile_search.html", {
+        "form": barcode_form
+    })

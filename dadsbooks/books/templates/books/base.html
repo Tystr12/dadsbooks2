@@ -232,6 +232,8 @@
             <a class="btn btn-outline-secondary" href="/admin/">Admin</a>
             <a class="btn btn-outline-primary" href="{% url 'quick_add' %}">Quick add</a>
             <a class="btn btn-outline-danger" href="{% url 'remove_by_isbn' %}">Remove Book</a>
+            <a href="{% url 'mobile_search' %}" class="btn btn-outline-primary">Mobile Search</a>
+            <a href="{% url 'mobile_scan' %}" class="btn btn-outline-primary">Mobile Quick Add</a>
             <a class="btn btn-outline-danger" href="{% url 'logout' %}">Logout</a>
             {% else %}
             <a class="btn btn-outline-primary" href="{% url 'login' %}">Login</a>
