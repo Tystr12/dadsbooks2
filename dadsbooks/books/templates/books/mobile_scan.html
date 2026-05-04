@@ -2,28 +2,45 @@
 
 {% block content %}
 
-<div id="reader" style="width: 300px;"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
+<div id="scanner" style="width:100%; max-width:400px;"></div>
 
 <form method="post" id="isbnForm">
     {% csrf_token %}
     <input type="text" name="barcode" id="barcodeInput">
-    <button type="submit">Add book</button>
 </form>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
-
 <script>
-    function onScanSuccess(decodedText) {
-        document.getElementById("barcodeInput").value = decodedText;
-        document.getElementById("isbnForm").submit();
+Quagga.init({
+    inputStream: {
+        type: "LiveStream",
+        target: document.querySelector('#scanner'),
+        constraints: {
+            facingMode: "environment", // back camera
+            focusMode: "continuous"
+        }
+    },
+    decoder: {
+        readers: ["ean_reader"] // THIS is key for ISBN
     }
+}, function(err) {
+    if (err) {
+        console.error(err);
+        return;
+    }
+    Quagga.start();
+});
 
-    const scanner = new Html5QrcodeScanner(
-        "reader",
-        { fps: 10, qrbox: 250 }
-    );
+Quagga.onDetected(function(result) {
+    const code = result.codeResult.code;
+    console.log("Detected:", code);
 
-    scanner.render(onScanSuccess);
+    document.getElementById("barcodeInput").value = code;
+    document.getElementById("isbnForm").submit();
+
+    Quagga.stop(); // stop after first scan
+});
 </script>
 
 {% endblock %}
