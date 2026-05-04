@@ -185,6 +185,51 @@
         html.dark .fantasytext {
             color: #e5e7eb !important;
         }
+        @media (max-width: 768px) {
+    .container-box {
+        width: 95%;
+        max-width: 95%;
+        padding: 20px;
+        overflow-x: hidden;
+    }
+
+    .edit-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .edit-layout img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .edit-layout form {
+        width: 100%;
+    }
+
+    .edit-layout input,
+    .edit-layout textarea,
+    .edit-layout select {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .button-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .button-row button,
+    .button-row a {
+        width: 100%;
+    }
+}
     </style>
     <script>
         function applyThemeIcon() {
