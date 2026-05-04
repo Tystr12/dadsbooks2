@@ -11,6 +11,32 @@
     <input type="text" name="barcode" id="barcodeInput">
 </form>
 
+<style>
+    #scanner {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+    #scanner {
+        max-width: 280px;
+    }
+    #scanner video {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 10px;
+}
+
+#scanner {
+    border: 2px dashed #4ade80;
+    padding: 10px;
+    border-radius: 12px;
+    background: #000;
+}
+}
+</style>
+
 <script>
 Quagga.init({
     inputStream: {
