@@ -7,16 +7,20 @@
 <div class="edit-layout">
     <div class="book-cover-box">
         {% if book.image_url %}
-            <img src="{{ book.image_url }}" alt="{{ book.title }}">
+        <img src="{{ book.image_url }}" alt="{{ book.title }}">
         {% else %}
-            <p>No cover image found.</p>
+        <p>No cover image found.</p>
         {% endif %}
     </div>
 
     <div>
         <br>
         <p><strong>Author:</strong> {{ book.author }}</p>
+        {% if book.price %}
         <p><strong>Price:</strong> {{ book.price }} NOK</p>
+        {% else %}
+        <p><strong>Price:</strong> Not set</p>
+        {% endif %}
         <p><strong>Available:</strong> {% if book.book_available %}Yes{% else %}No{% endif %}</p>
         <p><strong>ISBN:</strong> {{ book.isbn }}</p>
 
