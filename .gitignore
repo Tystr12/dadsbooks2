@@ -3,4 +3,6 @@ venv/
 db.sqlite3
 staticfiles/
 __pycache__/
-*.pyc*.pyc
+*.pyc
+*.sqlite3
+backups/
