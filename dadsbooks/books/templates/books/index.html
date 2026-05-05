@@ -201,6 +201,63 @@
         html.dark .fantasytext {
             color: #e5e7eb !important;
         }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            min-height: 60px;
+        }
+
+        .card-body .btn {
+            margin-top: auto;
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 300px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 768px) {
+            .book-cover {
+                height: 260px;
+            }
+        }
+
+        .card-img-wrapper {
+            padding: 18px 10px 8px 10px;
+        }
+
+        .card {
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-grid {
+            padding-left: 5%;
+            padding-right: 5%;
+            row-gap: 30px;
+        }
+
+        .book-column {
+            margin-bottom: 30px;
+        }
+
+        .card {
+            padding: 12px;
+            border-radius: 10px;
+        }
     </style>
 
     <script>
@@ -246,20 +303,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto fantasytext">
                     <li class="nav-item active fantasytext">
-                        <form class="form-inline my-2 my-lg-0 hide" method="get">
-                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"
-                                name="search" id="search">
-                            <!--<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+                        <form class="form-inline my-2 my-lg-0 hide" method="get" action="{% url 'shop' %}">
+                            <input class="form-control mr-sm-2" type="search" placeholder="Search books..."
+                                name="search" id="search" value="{{ search_query }}">
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
                         </form>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="#" onclick="searchbar()"><i class="fas fa-search"></i></a>
+                        <a class="nav-link" href="#" onclick="searchbar(); return false;">
+                            <i class="fas fa-search"></i>
+                        </a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Shop</a>
+                        <a class="nav-link" href="{% url 'shop' %}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">About Us</a>
@@ -281,19 +337,19 @@
         <section class="jumbotron text-center">
             <img href="favicon.ico">
             <h1 class="display-4 fantasytext">Velkommen til Gråskjegg Bøker</h1>
-            <a href="#" class="btn btn-primary btn-lg fantasytext">Shop Now</a>
         </section>
         {% if books %}
         <h2 class="text-center mb-4 fantasytext">Available Books</h2>
-        <div style="padding-left:5%; padding-right:5%;" class="row">
+        <div class="row book-grid">
 
             {% for book in books %}
             {% if book.book_available == True %}
 
-            <div class="col-md-3">
-                <div class="card mb-4">
-                    <img class="card-img-top" src="{{book.image_url}}" alt="Product 1"
-                        style="width:100%; height:20vw; object-fit:contain">
+            <div class="col-md-3 d-flex book-column">
+                <div class="card mb-4 w-100 h-100">
+                    <div class="card-img-wrapper">
+                        <img class="card-img-top book-cover" src="{{ book.image_url }}" alt="{{ book.title }}">
+                    </div>
                     <!--Figure out what object fit you want..-->
                     <div class="card-body">
                         <h5 class="card-title">{{book.title}} || {{book.author}}</h5>
