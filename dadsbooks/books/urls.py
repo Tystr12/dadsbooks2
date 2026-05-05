@@ -18,4 +18,5 @@ urlpatterns = [
     path("book/<int:book_id>/edit/", views.edit_book, name="edit_book"),
     path("mobile-scan/", views.mobile_scan, name="mobile_scan"),
     path("mobile-search/", views.mobile_search, name="mobile_search"),
+    path("book/<int:book_id>/", views.book_detail, name="book_detail"),
 ]

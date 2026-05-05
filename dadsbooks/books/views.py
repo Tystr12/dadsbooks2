@@ -409,3 +409,9 @@ def mobile_search(request):
     return render(request, "books/mobile_search.html", {
         "form": barcode_form
     })
+def book_detail(request, book_id):
+    book = get_object_or_404(Book, id=book_id, book_available=True)
+
+    return render(request, "books/book_detail.html", {
+        "book": book
+    })

@@ -1,0 +1,30 @@
+{% extends "books/base.html" %}
+
+{% block content %}
+
+<h1>{{ book.title }}</h1>
+
+<div class="edit-layout">
+    <div class="book-cover-box">
+        {% if book.image_url %}
+            <img src="{{ book.image_url }}" alt="{{ book.title }}">
+        {% else %}
+            <p>No cover image found.</p>
+        {% endif %}
+    </div>
+
+    <div>
+        <br>
+        <p><strong>Author:</strong> {{ book.author }}</p>
+        <p><strong>Price:</strong> {{ book.price }} NOK</p>
+        <p><strong>Available:</strong> {% if book.book_available %}Yes{% else %}No{% endif %}</p>
+        <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+
+        <h3>Description</h3>
+        <p>{{ book.description|linebreaks }}</p>
+
+        <a href="{% url 'shop' %}" class="btn btn-secondary">Back to shop</a>
+    </div>
+</div>
+
+{% endblock %}
