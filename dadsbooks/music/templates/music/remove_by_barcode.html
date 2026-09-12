@@ -1,0 +1,22 @@
+{% extends "music/base.html" %}
+
+{% block content %}
+
+<h1>Remove record by barcode</h1>
+
+<p>Scan or enter a barcode to remove one copy from stock.</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <p>
+        <label>Barcode:</label>
+        {{ form.barcode }}
+    </p>
+
+    <button type="submit">Remove one copy</button>
+</form>
+
+<a href="{% url 'music_dashboard' %}">Back to dashboard</a>
+
+{% endblock %}

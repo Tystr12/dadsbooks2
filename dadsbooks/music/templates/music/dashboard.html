@@ -1,0 +1,157 @@
+{% extends "music/base.html" %}
+
+{% block content %}
+<style>
+    .top {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    input,
+    select {
+        padding: 10px;
+        border: 1px solid #ccd1d5;
+        border-radius: 6px;
+    }
+
+    input {
+        flex: 1;
+    }
+
+    button,
+    .link-button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+        background: #f9fafb;
+    }
+
+    .status {
+        font-weight: bold;
+    }
+
+    .low {
+        color: #b45309;
+        font-weight: bold;
+    }
+
+    .sold {
+        color: #b91c1c;
+        font-weight: bold;
+    }
+</style>
+
+
+<div class="container">
+    <div class="top">
+        <h1>Music stock dashboard</h1>
+        <a class="link-button" href="{% url 'music_search' %}">Add by barcode</a>
+    </div>
+
+    <form method="get">
+        <input type="text" name="search" placeholder="Search artist, title or barcode" value="{{ search_query }}">
+
+        <select name="status">
+            <option value="">All statuses</option>
+            <option value="in_stock" {% if status_filter == "in_stock" %}selected{% endif %}>In stock</option>
+            <option value="listed" {% if status_filter == "listed" %}selected{% endif %}>Listed</option>
+            <option value="reserved" {% if status_filter == "reserved" %}selected{% endif %}>Reserved</option>
+            <option value="sold" {% if status_filter == "sold" %}selected{% endif %}>Sold</option>
+        </select>
+
+        <button type="submit">Search</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Artist</th>
+                <th>Title</th>
+                <th>Format</th>
+                <th>Barcode</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.artist }}</td>
+                <td>{{ record.title }}</td>
+                <td>{{ record.format }}</td>
+                <td>{{ record.barcode }}</td>
+                <td class="{% if record.quantity <= 1 %}low{% endif %}">
+                    {{ record.quantity }}
+                </td>
+                <td>
+                    {% if record.price %}
+                    {{ record.price }} kr
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+                <td class="{% if record.status == 'sold' %}sold{% else %}status{% endif %}">
+                    {{ record.get_status_display }}
+                </td>
+
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" href="{% url 'music_edit_record' record.id %}">Edit</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">No records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 20px;">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">← Previous</a>
+    {% endif %}
+
+    <span style="margin: 0 10px;">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Next →</a>
+    {% endif %}
+</div>
+
+
+{% endblock %}

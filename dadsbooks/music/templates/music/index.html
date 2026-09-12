@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gråskjegg Bøker</title>
-    <link rel="icon" href="favicon-16x16.png" type="image/png">
+    <title>Gråskjegg Bøker - Music</title>
+    <link rel="icon" href="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon-16x16.png?raw=true" type="image/png">
     <script>
         if (localStorage.getItem("theme") === "dark") {
             document.documentElement.classList.add("dark");
@@ -15,17 +15,15 @@
     <script>
         function searchbar() {
             let text = document.getElementById("search");
-            let form = text.closest('form'); // Ensure you're toggling the form itself
+            let form = text.closest('form');
             form.classList.toggle("hide");
             form.classList.toggle("show");
-            console.log("Triggered searchbar function.");
         }
     </script>
     <!-- Link to Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         html.dark main {
@@ -149,59 +147,6 @@
             background: #1f2937 !important;
         }
 
-        html.dark table {
-            color: #e5e7eb;
-        }
-
-        html.dark th {
-            background: #374151;
-        }
-
-        html.dark td {
-            border-color: #374151;
-        }
-
-        html.dark input,
-        html.dark select,
-        html.dark textarea {
-            background: #374151;
-            color: white;
-            border: 1px solid #4b5563;
-        }
-
-        html.dark a {
-            color: #93c5fd;
-        }
-
-        html.dark .container {
-            background: #1e293b;
-            color: #e5e7eb;
-        }
-
-        html.dark .container h1,
-        html.dark .container td,
-        html.dark .container th {
-            color: #e5e7eb;
-        }
-
-        html.dark .container table {
-            color: #e5e7eb;
-        }
-
-        html.dark .container th {
-            background: #334155;
-        }
-
-        html.dark .container td {
-            border-bottom: 1px solid #475569;
-        }
-
-        html.dark .navbar-brand,
-        html.dark .navbar-brand:hover,
-        html.dark .fantasytext {
-            color: #e5e7eb !important;
-        }
-
         .card {
             display: flex;
             flex-direction: column;
@@ -220,14 +165,14 @@
             margin-top: auto;
         }
 
-        .book-cover {
+        .record-cover {
             width: 100%;
             height: 300px;
             object-fit: contain;
         }
 
         @media (max-width: 768px) {
-            .book-cover {
+            .record-cover {
                 height: 260px;
             }
         }
@@ -244,19 +189,35 @@
             transform: translateY(-5px);
         }
 
-        .book-grid {
+        .record-grid {
             padding-left: 5%;
             padding-right: 5%;
             row-gap: 30px;
         }
 
-        .book-column {
+        .record-column {
             margin-bottom: 30px;
         }
 
         .card {
             padding: 12px;
             border-radius: 10px;
+        }
+
+        .format-badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #3730a3;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin-bottom: 6px;
+        }
+
+        html.dark .format-badge {
+            background: #312e81;
+            color: #e0e7ff;
         }
     </style>
 
@@ -291,10 +252,10 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand fantasytext" font-family="mythshire">
+            <a class="navbar-brand fantasytext" href="{% url 'music_shop' %}">
                 <img src="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon.png?raw=true"
                     alt="Logo" width="50" height="50" class="d-inline-block align-top">
-                Gråskjegg Bøker <span class="candle"></span>
+                Gråskjegg Musikk <span class="candle"></span>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -303,8 +264,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto fantasytext">
                     <li class="nav-item active fantasytext">
-                        <form class="form-inline my-2 my-lg-0 hide" method="get" action="{% url 'shop' %}">
-                            <input class="form-control mr-sm-2" type="search" placeholder="Search books..."
+                        <form class="form-inline my-2 my-lg-0 hide" method="get" action="{% url 'music_shop' %}">
+                            <input class="form-control mr-sm-2" type="search" placeholder="Search records..."
                                 name="search" id="search" value="{{ search_query }}">
                             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
                         </form>
@@ -315,16 +276,10 @@
                         </a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'shop' %}">Home</a>
+                        <a class="nav-link" href="{% url 'music_shop' %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'music_shop' %}">Music</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact Me</a>
+                        <a class="nav-link" href="{% url 'shop' %}">Books</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">Admin</a>
@@ -338,27 +293,27 @@
     </header>
     <main>
         <section class="jumbotron text-center">
-            <img href="favicon.ico">
-            <h1 class="display-4 fantasytext">Velkommen til Gråskjegg Bøker</h1>
+            <h1 class="display-4 fantasytext">Vinyl &amp; CDs</h1>
         </section>
-        {% if books %}
-        <h2 class="text-center mb-4 fantasytext">Available Books</h2>
-        <div class="row book-grid">
+        {% if records %}
+        <h2 class="text-center mb-4 fantasytext">Available Records</h2>
+        <div class="row record-grid">
 
-            {% for book in books %}
-            {% if book.book_available == True %}
-        <a href="{% url 'book_detail' book.id %}" class="text-decoration-none text-dark">
-            <div class="col-md-3 d-flex book-column">
+            {% for record in records %}
+            {% if record.record_available == True %}
+        <a href="{% url 'music_record_detail' record.id %}" class="text-decoration-none text-dark">
+            <div class="col-md-3 d-flex record-column">
                 <div class="card mb-4 w-100 h-100">
                     <div class="card-img-wrapper">
-                        <img class="card-img-top book-cover" src="{{ book.image_url }}" alt="{{ book.title }}">
+                        <img class="card-img-top record-cover" src="{{ record.image_url }}" alt="{{ record.title }}">
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">{{book.title}} || {{book.author}}</h5>
-                        {% if book.price is not None %}
-                        <p class="card-text" style="color:rgb(45, 236, 7); font-weight:bold;">{{book.price}} NOK</p>
+                        <span class="format-badge">{{ record.format }}</span>
+                        <h5 class="card-title">{{ record.artist }} || {{ record.title }}</h5>
+                        {% if record.price is not None %}
+                        <p class="card-text" style="color:rgb(45, 236, 7); font-weight:bold;">{{ record.price }} NOK</p>
                         {% endif %}
-                        <a href="{% url 'book_detail' book.id %}" class="btn btn-primary">View details</a>
+                        <a href="{% url 'music_record_detail' record.id %}" class="btn btn-primary">View details</a>
                     </div>
                 </div>
             </a>
@@ -370,7 +325,7 @@
             {% endfor %}
         </div>
         {% if page_obj.has_other_pages %}
-        <nav aria-label="Book pagination">
+        <nav aria-label="Record pagination">
             <ul class="pagination justify-content-center mt-4">
 
                 {% if page_obj.has_previous %}
@@ -396,7 +351,7 @@
         </nav>
         {% endif %}
         {% else %}
-        <p>No books were found...</p>
+        <p class="text-center">No records were found...</p>
         {% endif %}
     </main>
 </body>

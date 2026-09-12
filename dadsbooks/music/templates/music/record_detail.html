@@ -1,0 +1,37 @@
+{% extends "music/base.html" %}
+
+{% block content %}
+
+<h1>{{ record.artist }} - {{ record.title }}</h1>
+
+<div class="edit-layout">
+    <div class="record-cover-box">
+        {% if record.image_url %}
+        <img src="{{ record.image_url }}" alt="{{ record.title }}">
+        {% else %}
+        <p>No cover image found.</p>
+        {% endif %}
+    </div>
+
+    <div>
+        <br>
+        <p><strong>Format:</strong> {{ record.format }}{% if record.format_details %} ({{ record.format_details }}){% endif %}</p>
+        <p><strong>Label:</strong> {{ record.label|default:"Unknown" }}</p>
+        <p><strong>Year:</strong> {{ record.year|default:"Unknown" }}</p>
+        <p><strong>Genre:</strong> {{ record.genre|default:"-" }}</p>
+        {% if record.price %}
+        <p><strong>Price:</strong> {{ record.price }} NOK</p>
+        {% else %}
+        <p><strong>Price:</strong> Not set</p>
+        {% endif %}
+        <p><strong>Available:</strong> {% if record.record_available %}Yes{% else %}No{% endif %}</p>
+        <p><strong>Barcode:</strong> {{ record.barcode|default:"-" }}</p>
+
+        <h3>Notes</h3>
+        <p>{{ record.description|default:"-"|linebreaks }}</p>
+
+        <a href="{% url 'music_shop' %}" class="btn btn-secondary">Back to shop</a>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "music/base.html" %}
+
+{% block content %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
+<div class="scanner-wrapper">
+    <div id="scanner"></div>
+</div>
+
+<form method="post" id="barcodeForm">
+    {% csrf_token %}
+    <input type="text" name="barcode" id="barcodeInput">
+</form>
+
+<style>
+    .scanner-wrapper {
+        width: 100%;
+        max-width: 360px;
+        margin: 0 auto 20px auto;
+    }
+
+    #scanner {
+        width: 100%;
+        height: 260px;
+        overflow: hidden;
+        border: 2px dashed #4ade80;
+        border-radius: 12px;
+        background: #000;
+        position: relative;
+    }
+
+    #scanner video,
+    #scanner canvas {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    @media (max-width: 600px) {
+        .scanner-wrapper {
+            max-width: 320px;
+        }
+
+        #scanner {
+            height: 220px;
+        }
+    }
+</style>
+
+<script>
+    // Vinyl/CD barcodes are usually EAN-13 or UPC-A (12 digits), so we
+    // read a few more symbologies here than the book scanner does.
+    Quagga.init({
+        inputStream: {
+            type: "LiveStream",
+            target: document.querySelector('#scanner'),
+            constraints: {
+                facingMode: "environment", // back camera
+                focusMode: "continuous"
+            }
+        },
+        decoder: {
+            readers: ["ean_reader", "upc_reader", "upc_e_reader"]
+        }
+    }, function (err) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        Quagga.start();
+    });
+
+    let scanned = false;
+
+    Quagga.onDetected(function (result) {
+        if (scanned) return;
+
+        const code = result.codeResult.code;
+        if (!code || (code.length !== 12 && code.length !== 13)) return;
+
+        scanned = true;
+
+        console.log("Detected:", code);
+        document.getElementById("barcodeInput").value = code;
+        document.getElementById("barcodeForm").submit();
+
+        Quagga.stop();
+    });
+
+</script>
+
+{% endblock %}

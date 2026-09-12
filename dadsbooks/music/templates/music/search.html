@@ -1,0 +1,19 @@
+{% extends "music/base.html" %}
+
+{% block content %}
+
+<h1>Scan or enter barcode</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    <p>
+        <label>Barcode:</label>
+        {{ form.barcode }}
+    </p>
+
+    <button type="submit">Look up record</button>
+</form>
+<a href="{% url 'music_manual_search' %}">Search Discogs by artist/title instead</a><br>
+<a href="{% url 'music_add' %}">Add record manually</a>
+{% endblock %}

@@ -9,7 +9,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gråskjegg Bøker</title>
+    <title>Gråskjegg Bøker - Music</title>
 
     <!-- Favicon -->
     <link rel="icon"
@@ -263,23 +263,24 @@
 
     <!-- 🔥 Clean navbar -->
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand fantasytext" href="{% url 'shop' %}">
+        <a class="navbar-brand fantasytext" href="{% url 'music_shop' %}">
             <img src="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon.png?raw=true"
                 width="40" height="40" class="d-inline-block align-top">
-            Gråskjegg Bøker <span class="candle"></span>
+            Gråskjegg Musikk <span class="candle"></span>
         </a>
 
         <div>
             {% if user.is_authenticated %}
-            <a class="btn btn-outline-primary" href="{% url 'dashboard' %}">Dashboard</a>
-            <a class="btn btn-outline-primary" href="{% url 'search' %}">Search</a>
-            <a class="btn btn-outline-primary" href="{% url 'add' %}">Add book</a>
+            <a class="btn btn-outline-primary" href="{% url 'music_dashboard' %}">Dashboard</a>
+            <a class="btn btn-outline-primary" href="{% url 'music_search' %}">Search by barcode</a>
+            <a class="btn btn-outline-primary" href="{% url 'music_manual_search' %}">Search Discogs</a>
+            <a class="btn btn-outline-primary" href="{% url 'music_add' %}">Add manually</a>
             <a class="btn btn-outline-secondary" href="/admin/">Admin</a>
-            <a class="btn btn-outline-primary" href="{% url 'quick_add' %}">Quick add</a>
-            <a class="btn btn-outline-danger" href="{% url 'remove_by_isbn' %}">Remove Book</a>
-            <a href="{% url 'mobile_search' %}" class="btn btn-outline-primary">Mobile Search</a>
-            <a href="{% url 'mobile_scan' %}" class="btn btn-outline-primary">Mobile Quick Add</a>
-            <a class="btn btn-outline-secondary" href="{% url 'music_dashboard' %}">Music</a>
+            <a class="btn btn-outline-primary" href="{% url 'music_quick_add' %}">Quick add</a>
+            <a class="btn btn-outline-danger" href="{% url 'music_remove_by_barcode' %}">Remove record</a>
+            <a href="{% url 'music_mobile_search' %}" class="btn btn-outline-primary">Mobile Search</a>
+            <a href="{% url 'music_mobile_scan' %}" class="btn btn-outline-primary">Mobile Quick Add</a>
+            <a class="btn btn-outline-secondary" href="{% url 'dashboard' %}">Books</a>
             <a class="btn btn-outline-danger" href="{% url 'logout' %}">Logout</a>
             {% else %}
             <a class="btn btn-outline-primary" href="{% url 'login' %}">Login</a>

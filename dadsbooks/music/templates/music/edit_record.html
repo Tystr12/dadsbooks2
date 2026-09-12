@@ -1,0 +1,114 @@
+{% extends "music/base.html" %}
+
+{% block content %}
+
+<style>
+    .edit-layout {
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+    }
+
+    .record-cover-box img {
+        max-width: 320px;
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        background: #eee;
+        border: 1px solid #ddd;
+    }
+
+    .edit-form {
+        flex: 1;
+    }
+
+    .edit-form p {
+        margin-bottom: 18px;
+    }
+
+    .edit-form label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    .edit-form input,
+    .edit-form textarea,
+    .edit-form select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border: 1px solid #ccd1d5;
+        border-radius: 6px;
+        font-size: 15px;
+    }
+
+    .edit-form textarea {
+        min-height: 160px;
+        resize: vertical;
+    }
+
+    .button-row {
+        margin-top: 24px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    @media (max-width: 768px) {
+        .edit-layout {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .record-cover-box {
+            width: 100%;
+            text-align: center;
+        }
+
+        .record-cover-box img {
+            max-width: 260px;
+        }
+
+        .edit-form {
+            width: 100%;
+        }
+
+        .button-row {
+            flex-direction: column;
+        }
+
+        .button-row button,
+        .button-row a {
+            width: 100%;
+        }
+    }
+</style>
+
+<h1>Edit record</h1>
+
+<div class="edit-layout">
+    <div class="record-cover-box">
+        {% if record.image_url %}
+            <img src="{{ record.image_url }}" alt="{{ record.title }}">
+        {% else %}
+            <p>No cover image found.</p>
+        {% endif %}
+    </div>
+
+    <form method="post" class="edit-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="button-row">
+            <button type="submit" class="btn btn-primary">Update record</button>
+            <button type="submit" name="delete_one" class="btn btn-danger">Delete one copy</button>
+            <button type="submit" name="delete_all" class="btn btn-outline-danger">
+                Delete record completely
+            </button>
+            <a href="{% url 'music_dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

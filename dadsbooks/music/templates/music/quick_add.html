@@ -1,0 +1,22 @@
+{% extends "music/base.html" %}
+
+{% block content %}
+
+<h1>Quick add by barcode</h1>
+
+<p>Scan or enter a barcode to add one copy immediately without confirmation.</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <p>
+        <label>Barcode:</label>
+        {{ form.barcode }}
+    </p>
+
+    <button type="submit">Quick add</button>
+</form>
+
+<a href="{% url 'music_dashboard' %}">Back to dashboard</a>
+
+{% endblock %}

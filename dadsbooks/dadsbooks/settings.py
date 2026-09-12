@@ -34,6 +34,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR.parent / ".env")
 ISBNDB_API_KEY = os.getenv("ISBNDB_API_KEY")
 
+# Either DISCOGS_TOKEN (a personal access token) or the
+# DISCOGS_CONSUMER_KEY/DISCOGS_CONSUMER_SECRET pair (from a registered
+# Discogs "Application") will work - see music/discogs.py for details.
+DISCOGS_TOKEN = os.getenv("DISCOGS_TOKEN")
+DISCOGS_CONSUMER_KEY = os.getenv("DISCOGS_CONSUMER_KEY")
+DISCOGS_CONSUMER_SECRET = os.getenv("DISCOGS_CONSUMER_SECRET")
+DISCOGS_USER_AGENT = os.getenv("DISCOGS_USER_AGENT", "DadsbooksMusicApp/1.0")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -52,6 +60,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'books.apps.BooksConfig',
+    'music.apps.MusicConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
