@@ -266,6 +266,90 @@
             color: #d1fae5;
         }
 
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-divider {
+            width: 1px;
+            height: 24px;
+            background: #d1d5db;
+            margin: 0 2px;
+        }
+
+        html.dark .nav-divider {
+            background: #4b5563;
+        }
+
+        .nav-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            right: 0;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            min-width: 210px;
+            padding: 6px;
+            z-index: 1000;
+        }
+
+        .nav-dropdown-menu.show {
+            display: block;
+        }
+
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 8px 10px;
+            border-radius: 6px;
+            color: #111827;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-dropdown-menu a:hover {
+            background: #f3f4f6;
+        }
+
+        .nav-dropdown-menu a.nav-dropdown-danger {
+            color: #b91c1c;
+        }
+
+        .nav-dropdown-menu a.nav-dropdown-danger:hover {
+            background: #fee2e2;
+        }
+
+        html.dark .nav-dropdown-menu {
+            background: #1f2937;
+            border-color: #374151;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        html.dark .nav-dropdown-menu a {
+            color: #e5e7eb;
+        }
+
+        html.dark .nav-dropdown-menu a:hover {
+            background: #374151;
+        }
+
+        html.dark .nav-dropdown-menu a.nav-dropdown-danger {
+            color: #fca5a5;
+        }
+
+        html.dark .nav-dropdown-menu a.nav-dropdown-danger:hover {
+            background: #7f1d1d;
+        }
+
         @media (max-width: 768px) {
     .container-box {
         width: 95%;
@@ -374,6 +458,24 @@
                 showCopied();
             }
         }
+
+        function toggleNavDropdown(event, id) {
+            event.stopPropagation();
+            const menu = document.getElementById(id);
+            const isOpen = menu.classList.contains("show");
+            document.querySelectorAll(".nav-dropdown-menu.show").forEach(function (el) {
+                el.classList.remove("show");
+            });
+            if (!isOpen) {
+                menu.classList.add("show");
+            }
+        }
+
+        document.addEventListener("click", function () {
+            document.querySelectorAll(".nav-dropdown-menu.show").forEach(function (el) {
+                el.classList.remove("show");
+            });
+        });
     </script>
 </head>
 
@@ -393,19 +495,28 @@
             </span>
         </a>
 
-        <div>
+        <div class="nav-actions">
             {% if user.is_authenticated %}
             <a class="btn btn-outline-primary" href="{% url 'music_dashboard' %}">Dashboard</a>
             <a class="btn btn-outline-primary" href="{% url 'music_inquiries' %}">Messages</a>
             <a class="btn btn-outline-primary" href="{% url 'music_search' %}">Search by barcode</a>
-            <a class="btn btn-outline-primary" href="{% url 'music_manual_search' %}">Search Discogs</a>
             <a class="btn btn-outline-primary" href="{% url 'music_add' %}">Add manually</a>
-            <a class="btn btn-outline-secondary" href="/admin/">Admin</a>
-            <a class="btn btn-outline-primary" href="{% url 'music_quick_add' %}">Quick add</a>
-            <a class="btn btn-outline-danger" href="{% url 'music_remove_by_barcode' %}">Remove record</a>
-            <a href="{% url 'music_mobile_search' %}" class="btn btn-outline-primary">Mobile Search</a>
-            <a href="{% url 'music_mobile_scan' %}" class="btn btn-outline-primary">Mobile Quick Add</a>
             <a class="btn btn-outline-secondary" href="{% url 'dashboard' %}">Books</a>
+
+            <div class="nav-dropdown">
+                <button type="button" class="btn btn-outline-secondary"
+                    onclick="toggleNavDropdown(event, 'moreMenuMusic')">More &#9662;</button>
+                <div class="nav-dropdown-menu" id="moreMenuMusic">
+                    <a href="{% url 'music_manual_search' %}">Search Discogs</a>
+                    <a href="{% url 'music_quick_add' %}">Quick add</a>
+                    <a href="{% url 'music_mobile_search' %}">Mobile Search</a>
+                    <a href="{% url 'music_mobile_scan' %}">Mobile Quick Add</a>
+                    <a href="{% url 'music_remove_by_barcode' %}" class="nav-dropdown-danger">Remove record</a>
+                </div>
+            </div>
+
+            <span class="nav-divider"></span>
+            <a class="btn btn-outline-secondary" href="/admin/">Admin</a>
             <a class="btn btn-outline-danger" href="{% url 'logout' %}">Logout</a>
             {% else %}
             <a class="btn btn-outline-primary" href="{% url 'login' %}">Login</a>
