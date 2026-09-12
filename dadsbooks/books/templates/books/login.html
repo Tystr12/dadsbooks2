@@ -2,14 +2,74 @@
 
 {% block content %}
 
+<style>
+    h1 {
+        margin-top: 0;
+        margin-bottom: 24px;
+    }
+
+    form p {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border: 1px solid #ccd1d5;
+        border-radius: 6px;
+        font-size: 15px;
+    }
+
+    .button-row {
+        margin-top: 24px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .button-row button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .button-row button:hover {
+        background: #1d4ed8;
+    }
+
+    .cancel {
+        color: #555;
+        text-decoration: none;
+    }
+
+    .cancel:hover {
+        text-decoration: underline;
+    }
+</style>
+
 <h1>Log in</h1>
 
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
 
-    <button type="submit">Log in</button>
+    <div class="button-row">
+        <button type="submit">Log in</button>
+        <a href="{% url 'shop' %}" class="btn btn-secondary">Back to shop</a>
+        <a href="{% url 'password_reset' %}" class="cancel">Forgot password?</a>
+    </div>
 </form>
-<a href="{% url 'shop' %}" class="btn btn-secondary">Back to shop</a>
-<a href="{% url 'password_reset' %}">Forgot password?</a>
+
 {% endblock %}
