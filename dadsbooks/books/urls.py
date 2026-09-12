@@ -24,6 +24,9 @@ urlpatterns = [
     path("messages/", views.inquiries, name="book_inquiries"),
     path("messages/<int:inquiry_id>/delete/", views.delete_inquiry, name="book_delete_inquiry"),
 
+    path("about/", views.about, name="about"),
+    path("contact/", views.contact, name="contact"),
+
      path(
         "password-reset/",
         auth_views.PasswordResetView.as_view(

@@ -59,7 +59,7 @@ def dashboard(request):
     if status_filter:
         records = records.filter(status=status_filter)
 
-    paginator = Paginator(records, 10)
+    paginator = Paginator(records, 25)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 

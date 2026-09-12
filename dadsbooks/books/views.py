@@ -206,7 +206,7 @@ def dashboard(request):
 
     if status_filter:
         books = books.filter(status=status_filter)
-    paginator = Paginator(books, 10)  
+    paginator = Paginator(books, 25)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
@@ -487,3 +487,13 @@ def delete_inquiry(request, inquiry_id):
         messages.success(request, "Message deleted.")
 
     return redirect("book_inquiries")
+
+
+def about(request):
+    return render(request, "books/about.html")
+
+
+def contact(request):
+    return render(request, "books/contact.html", {
+        "contact_email": settings.DAD_CONTACT_EMAIL,
+    })

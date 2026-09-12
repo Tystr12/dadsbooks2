@@ -70,6 +70,31 @@
         color: #b91c1c;
         font-weight: bold;
     }
+
+    .cover-thumb {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #e2e5e9;
+        background: #f4f6f8;
+        display: block;
+    }
+
+    .cover-thumb-empty {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+        border: 1px dashed #ccd1d5;
+        background: #f4f6f8;
+        display: block;
+    }
+
+    html.dark .cover-thumb,
+    html.dark .cover-thumb-empty {
+        background: #1f2937;
+        border-color: #374151;
+    }
 </style>
 
 
@@ -96,6 +121,7 @@
     <table>
         <thead>
             <tr>
+                <th>Cover</th>
                 <th>Title</th>
                 <th>Author</th>
                 <th>ISBN</th>
@@ -109,6 +135,15 @@
         <tbody>
             {% for book in books %}
             <tr>
+                <td>
+                    {% if book.condition_photo %}
+                    <img class="cover-thumb" src="{{ book.condition_photo.url }}" alt="">
+                    {% elif book.image_url %}
+                    <img class="cover-thumb" src="{{ book.image_url }}" alt="">
+                    {% else %}
+                    <span class="cover-thumb-empty"></span>
+                    {% endif %}
+                </td>
                 <td>{{ book.title }}</td>
                 <td>{{ book.author }}</td>
                 <td>{{ book.isbn }}</td>
@@ -132,7 +167,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7">No books found.</td>
+                <td colspan="8">No books found.</td>
             </tr>
             {% endfor %}
         </tbody>

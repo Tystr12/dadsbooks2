@@ -258,3 +258,21 @@ class MessagesInboxTests(TestCase):
         response = self.client.get(reverse("dashboard"))
 
         self.assertContains(response, reverse("book_inquiries"))
+
+
+class StaticPagesTests(TestCase):
+    def test_about_page_renders(self):
+        response = self.client.get(reverse("about"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_shop_nav_links_to_about_and_contact(self):
+        response = self.client.get(reverse("shop"))
+        self.assertContains(response, reverse("about"))
+        self.assertContains(response, reverse("contact"))
+
+    def test_contact_page_shows_dad_contact_email(self):
+        with self.settings(DAD_CONTACT_EMAIL="dad@example.com"):
+            response = self.client.get(reverse("contact"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "dad@example.com")

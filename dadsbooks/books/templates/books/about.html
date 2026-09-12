@@ -1,0 +1,33 @@
+{% extends "books/base.html" %}
+
+{% block content %}
+
+<style>
+    .about-page {
+        max-width: 640px;
+    }
+
+    .about-page p {
+        line-height: 1.6;
+        margin-bottom: 18px;
+    }
+</style>
+
+<h1>About this site</h1>
+
+<div class="about-page">
+    <p>
+        Gråskjegg Bøker (and its sibling shelf, Gråskjegg Musikk) is a way to showcase a personal
+        collection of books, vinyl, and CDs. Browse what's here, and if something catches your eye,
+        get in touch through the item's own page &mdash; or the <a href="{% url 'contact' %}">contact page</a>.
+    </p>
+    <p>
+        It's also a learning project: a chance to build and actually run a real site, from the
+        catalog itself to deploying it for real, rather than just another tutorial exercise.
+        Thanks for stopping by.
+    </p>
+
+    <a href="{% url 'shop' %}" class="btn btn-secondary">Back to shop</a>
+</div>
+
+{% endblock %}

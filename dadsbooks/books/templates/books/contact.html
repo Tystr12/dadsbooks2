@@ -1,0 +1,40 @@
+{% extends "books/base.html" %}
+
+{% block content %}
+
+<style>
+    .contact-page {
+        max-width: 640px;
+    }
+
+    .contact-page p {
+        line-height: 1.6;
+        margin-bottom: 18px;
+    }
+
+    .contact-email {
+        display: inline-block;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<h1>Get in touch</h1>
+
+<div class="contact-page">
+    <p>
+        Have a question about something specific in the collection? The quickest way to ask is
+        right from that item's own page &mdash; there's a message form there that goes straight
+        to the seller.
+    </p>
+    <p>For anything else, feel free to reach out by email:</p>
+
+    <a class="contact-email" href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+
+    <p>
+        <a href="{% url 'shop' %}" class="btn btn-secondary">Back to shop</a>
+    </p>
+</div>
+
+{% endblock %}
