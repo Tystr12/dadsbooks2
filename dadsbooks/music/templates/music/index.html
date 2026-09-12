@@ -77,58 +77,112 @@
             display: inline-block;
         }
 
-        .candle {
+        .vinyl-wrap {
             position: relative;
             display: inline-block;
-            width: 14px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             margin-left: 10px;
-            background: #eaf371;
-            border-radius: 3px;
+            margin-top: 8px;
             vertical-align: middle;
-            box-shadow: inset 0 -4px 0 #d1d5db;
-            margin-top: 10px;
         }
 
-        .candle::before {
-            content: "";
+        .vinyl {
             position: absolute;
-            top: -18px;
-            left: 3px;
-            width: 8px;
-            height: 16px;
-            background: radial-gradient(circle at 50% 65%, #fff7ad 0%, #facc15 35%, #f97316 70%);
-            border-radius: 50% 50% 45% 45%;
-            animation: flicker 1.6s infinite ease-in-out;
-            transform-origin: bottom center;
-            filter: drop-shadow(0 0 8px #f59e0b);
+            top: 0;
+            left: 0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background:
+                repeating-radial-gradient(
+                    circle at center,
+                    #0a0a0a 0px,
+                    #0a0a0a 2px,
+                    #2b2b2b 3px,
+                    #0a0a0a 4px
+                );
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+            animation: vinylSpin 2.4s linear infinite;
         }
 
-        .candle::after {
+        .vinyl::before {
             content: "";
             position: absolute;
-            top: -4px;
-            left: 6px;
-            width: 2px;
-            height: 7px;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle at 35% 35%, #f97316, #b91c1c 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .vinyl::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 3px;
+            height: 3px;
             background: #111827;
-            border-radius: 2px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
         }
 
-        @keyframes flicker {
-            0% {
-                transform: scale(1) rotate(-1deg);
-                opacity: 0.9;
+        @keyframes vinylSpin {
+            from {
+                transform: rotate(0deg);
             }
 
-            50% {
-                transform: scale(1.08) rotate(1deg);
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .note {
+            position: absolute;
+            top: 0;
+            font-size: 12px;
+            line-height: 1;
+            opacity: 0;
+            pointer-events: none;
+            animation: noteFloat 3s ease-out infinite;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        }
+
+        .note.n1 {
+            left: 2px;
+            color: #f97316;
+            animation-delay: 0s;
+        }
+
+        .note.n2 {
+            left: 11px;
+            color: #22c55e;
+            animation-delay: 1s;
+        }
+
+        .note.n3 {
+            left: 18px;
+            color: #3b82f6;
+            animation-delay: 2s;
+        }
+
+        @keyframes noteFloat {
+            0% {
+                transform: translateY(2px) scale(0.6) rotate(-8deg);
+                opacity: 0;
+            }
+
+            20% {
                 opacity: 1;
             }
 
             100% {
-                transform: scale(1.02) rotate(-1deg);
-                opacity: 0.95;
+                transform: translateY(-24px) scale(1.05) rotate(10deg);
+                opacity: 0;
             }
         }
 
@@ -255,7 +309,13 @@
             <a class="navbar-brand fantasytext" href="{% url 'music_shop' %}">
                 <img src="https://github.com/Tystr12/dadsbooks2/blob/main/dadsbooks/books/templates/books/favicon.png?raw=true"
                     alt="Logo" width="50" height="50" class="d-inline-block align-top">
-                Gråskjegg Musikk <span class="candle"></span>
+                Gråskjegg Musikk
+                <span class="vinyl-wrap">
+                    <span class="vinyl"></span>
+                    <span class="note n1">&#9834;</span>
+                    <span class="note n2">&#9835;</span>
+                    <span class="note n3">&#9834;</span>
+                </span>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
