@@ -352,3 +352,9 @@ class MessagesInboxTests(TestCase):
         response = self.client.get(reverse("music_dashboard"))
 
         self.assertContains(response, reverse("music_inquiries"))
+
+    def test_inquiry_list_has_copy_email_button(self):
+        self.client.login(username="inbox_test_admin_music", password="pw12345")
+        response = self.client.get(reverse("music_inquiries"))
+
+        self.assertContains(response, "copyEmailToClipboard('kari@example.com'")

@@ -18,6 +18,13 @@
         font-size: 18px;
         margin-bottom: 20px;
     }
+
+    .contact-email-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
 </style>
 
 <h1>Get in touch</h1>
@@ -30,7 +37,10 @@
     </p>
     <p>For anything else, feel free to reach out by email:</p>
 
-    <a class="contact-email" href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+    <div class="contact-email-row">
+        <a class="contact-email" href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+        <button type="button" class="btn-copy" onclick="copyEmailToClipboard('{{ contact_email }}', this)">Copy</button>
+    </div>
 
     <p>
         <a href="{% url 'shop' %}" class="btn btn-secondary">Back to shop</a>

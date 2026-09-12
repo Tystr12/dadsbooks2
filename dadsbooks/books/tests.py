@@ -259,6 +259,12 @@ class MessagesInboxTests(TestCase):
 
         self.assertContains(response, reverse("book_inquiries"))
 
+    def test_inquiry_list_has_copy_email_button(self):
+        self.client.login(username="inbox_test_admin", password="pw12345")
+        response = self.client.get(reverse("book_inquiries"))
+
+        self.assertContains(response, "copyEmailToClipboard('kari@example.com'")
+
 
 class StaticPagesTests(TestCase):
     def test_about_page_renders(self):
@@ -276,3 +282,9 @@ class StaticPagesTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "dad@example.com")
+
+    def test_contact_page_has_copy_email_button(self):
+        with self.settings(DAD_CONTACT_EMAIL="dad@example.com"):
+            response = self.client.get(reverse("contact"))
+
+        self.assertContains(response, "copyEmailToClipboard('dad@example.com'")

@@ -185,6 +185,33 @@
         html.dark .fantasytext {
             color: #e5e7eb !important;
         }
+
+        .btn-copy {
+            background: #f3f4f6;
+            color: #111827;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .btn-copy.copied {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        html.dark .btn-copy {
+            background: #374151;
+            color: #e5e7eb;
+        }
+
+        html.dark .btn-copy.copied {
+            background: #065f46;
+            color: #d1fae5;
+        }
+
         @media (max-width: 768px) {
     .container-box {
         width: 95%;
@@ -256,6 +283,43 @@
         }
 
         document.addEventListener("DOMContentLoaded", applyThemeIcon);
+
+        function fallbackCopyText(text) {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.left = "-9999px";
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand("copy");
+            } catch (err) {
+                console.error("Copy failed", err);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function copyEmailToClipboard(email, btn) {
+            const originalText = btn.textContent;
+            function showCopied() {
+                btn.textContent = "Copied!";
+                btn.classList.add("copied");
+                setTimeout(function () {
+                    btn.textContent = originalText;
+                    btn.classList.remove("copied");
+                }, 1500);
+            }
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(email).then(showCopied).catch(function () {
+                    fallbackCopyText(email);
+                    showCopied();
+                });
+            } else {
+                fallbackCopyText(email);
+                showCopied();
+            }
+        }
     </script>
 </head>
 

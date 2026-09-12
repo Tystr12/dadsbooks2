@@ -83,6 +83,7 @@
     <div class="inquiry-message">{{ inquiry.message }}</div>
     <div class="inquiry-actions">
         <a class="btn-reply" href="mailto:{{ inquiry.email }}?subject=Re: {{ inquiry.book.title }}">Reply by email</a>
+        <button type="button" class="btn-copy" onclick="copyEmailToClipboard('{{ inquiry.email }}', this)">Copy email</button>
         <form method="post" action="{% url 'book_delete_inquiry' inquiry.id %}"
             onsubmit="return confirm('Delete this message?');">
             {% csrf_token %}
