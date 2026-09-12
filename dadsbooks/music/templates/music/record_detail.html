@@ -2,11 +2,88 @@
 
 {% block content %}
 
+<style>
+    .detail-photo img {
+        max-width: 320px;
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        background: #eee;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+    }
+
+    .contact-box {
+        margin-top: 32px;
+        padding: 20px;
+        border: 1px solid #e2e5e9;
+        border-radius: 8px;
+        background: #f9fafb;
+        max-width: 480px;
+    }
+
+    .contact-box h3 {
+        margin-top: 0;
+    }
+
+    .contact-box label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    .contact-box p {
+        margin-bottom: 14px;
+    }
+
+    .contact-box input[type="text"],
+    .contact-box input[type="email"],
+    .contact-box textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        border: 1px solid #ccd1d5;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    .contact-box textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .contact-box button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 9px 16px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .contact-box button:hover {
+        background: #1d4ed8;
+    }
+
+    /* Honeypot field: hidden from real visitors, still visible to simple bots */
+    .hp-field {
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    }
+</style>
+
 <h1>{{ record.artist }} - {{ record.title }}</h1>
 
 <div class="edit-layout">
-    <div class="record-cover-box">
-        {% if record.image_url %}
+    <div class="record-cover-box detail-photo">
+        {% if record.condition_photo %}
+        <img src="{{ record.condition_photo.url }}" alt="{{ record.title }} (this copy)">
+        {% elif record.image_url %}
         <img src="{{ record.image_url }}" alt="{{ record.title }}">
         {% else %}
         <p>No cover image found.</p>
@@ -26,11 +103,44 @@
         {% endif %}
         <p><strong>Available:</strong> {% if record.record_available %}Yes{% else %}No{% endif %}</p>
         <p><strong>Barcode:</strong> {{ record.barcode|default:"-" }}</p>
+        {% if record.media_condition %}
+        <p><strong>Media condition:</strong> {{ record.get_media_condition_display }}</p>
+        {% endif %}
+        {% if record.sleeve_condition %}
+        <p><strong>Sleeve condition:</strong> {{ record.get_sleeve_condition_display }}</p>
+        {% endif %}
 
         <h3>Notes</h3>
         <p>{{ record.description|default:"-"|linebreaks }}</p>
 
         <a href="{% url 'music_shop' %}" class="btn btn-secondary">Back to shop</a>
+
+        {% if record.record_available %}
+        <div class="contact-box">
+            <h3>Interested in this record?</h3>
+            <p>Send a message and it'll go straight to the seller.</p>
+            <form method="post" action="{% url 'music_contact_seller' record.id %}">
+                {% csrf_token %}
+                <p>
+                    <label for="id_name">Your name</label>
+                    {{ inquiry_form.name }}
+                </p>
+                <p>
+                    <label for="id_email">Your email</label>
+                    {{ inquiry_form.email }}
+                </p>
+                <p>
+                    <label for="id_message">Message</label>
+                    {{ inquiry_form.message }}
+                </p>
+                <p class="hp-field" aria-hidden="true">
+                    <label for="id_website">Leave this field blank</label>
+                    {{ inquiry_form.website }}
+                </p>
+                <button type="submit">Send message</button>
+            </form>
+        </div>
+        {% endif %}
     </div>
 </div>
 

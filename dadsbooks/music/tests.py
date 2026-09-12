@@ -1,10 +1,17 @@
+import shutil
+import tempfile
+from io import BytesIO
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase, override_settings
+from django.urls import reverse
+from PIL import Image
 
 from . import discogs
-from .models import Record
+from .imaging import InvalidImageError, MAX_DIMENSION, compress_uploaded_photo
+from .models import Record, RecordInquiry
 
 
 class DiscogsMappingTests(TestCase):
@@ -151,3 +158,149 @@ class MusicViewsTests(TestCase):
         for url in ["/shop/", "/dashboard/"]:
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200, f"{url} returned {response.status_code}")
+
+
+def _make_uploaded_image(size=(3000, 2000), fmt="PNG", name="big_photo.png"):
+    buffer = BytesIO()
+    Image.new("RGB", size, color=(10, 80, 160)).save(buffer, format=fmt)
+    buffer.seek(0)
+    content_type = "image/png" if fmt == "PNG" else f"image/{fmt.lower()}"
+    return SimpleUploadedFile(name, buffer.read(), content_type=content_type)
+
+
+class PhotoCompressionTests(TestCase):
+    def test_compress_uploaded_photo_downscales_and_converts_to_jpeg(self):
+        uploaded = _make_uploaded_image(size=(3000, 2000))
+
+        result = compress_uploaded_photo(uploaded)
+
+        self.assertTrue(result.name.endswith(".jpg"))
+        image = Image.open(result)
+        self.assertLessEqual(max(image.size), MAX_DIMENSION)
+        self.assertEqual(image.format, "JPEG")
+        self.assertLess(result.size, 500 * 1024)
+
+    def test_compress_uploaded_photo_rejects_invalid_image(self):
+        bogus = SimpleUploadedFile(
+            "not_a_photo.png", b"this is not image data", content_type="image/png"
+        )
+
+        with self.assertRaises(InvalidImageError):
+            compress_uploaded_photo(bogus)
+
+
+class ContactSellerTests(TestCase):
+    def setUp(self):
+        self.record = Record.objects.create(
+            artist="Nirvana",
+            title="Nevermind",
+            format="Vinyl",
+            barcode="720642442725",
+            quantity=1,
+            price=250,
+            record_available=True,
+        )
+
+    def test_conditions_shown_on_detail_page_when_set(self):
+        self.record.media_condition = "vg_plus"
+        self.record.sleeve_condition = "good"
+        self.record.save()
+
+        response = self.client.get(reverse("music_record_detail", args=[self.record.id]))
+
+        self.assertContains(response, "Very Good Plus (VG+)")
+        self.assertContains(response, "Good (G)")
+
+    def test_contact_seller_creates_inquiry(self):
+        response = self.client.post(
+            reverse("music_contact_seller", args=[self.record.id]),
+            {
+                "name": "Kari Nordmann",
+                "email": "kari@example.com",
+                "message": "Is this still available?",
+                "website": "",
+            },
+        )
+
+        self.assertRedirects(response, reverse("music_record_detail", args=[self.record.id]))
+        self.assertEqual(RecordInquiry.objects.count(), 1)
+        inquiry = RecordInquiry.objects.get()
+        self.assertEqual(inquiry.record, self.record)
+        self.assertEqual(inquiry.email, "kari@example.com")
+
+    def test_contact_seller_honeypot_silently_drops_submission(self):
+        response = self.client.post(
+            reverse("music_contact_seller", args=[self.record.id]),
+            {
+                "name": "Bot",
+                "email": "bot@example.com",
+                "message": "buy cheap watches",
+                "website": "http://spam.example.com",
+            },
+        )
+
+        self.assertRedirects(response, reverse("music_record_detail", args=[self.record.id]))
+        self.assertEqual(RecordInquiry.objects.count(), 0)
+
+    def test_contact_seller_404s_for_unavailable_record(self):
+        self.record.record_available = False
+        self.record.save()
+
+        response = self.client.post(
+            reverse("music_contact_seller", args=[self.record.id]),
+            {"name": "A", "email": "a@example.com", "message": "hi", "website": ""},
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+
+class ConditionPhotoUploadEndToEndTests(TestCase):
+    """Exercises the full add-record pipeline: multipart POST -> RecordForm
+    -> clean_condition_photo -> imaging.compress_uploaded_photo -> saved
+    ImageField. Uses a scratch MEDIA_ROOT so nothing touches real storage."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._media_root = tempfile.mkdtemp(prefix="dadsbooks_music_test_media_")
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls._media_root, ignore_errors=True)
+        super().tearDownClass()
+
+    def setUp(self):
+        self.user = get_user_model().objects.create_superuser(
+            "photo_test_admin_music", "admin3@example.com", "pw12345"
+        )
+        self.client.login(username="photo_test_admin_music", password="pw12345")
+
+    def test_uploading_a_photo_through_add_view_saves_compressed_jpeg(self):
+        with override_settings(MEDIA_ROOT=self._media_root):
+            photo = _make_uploaded_image(size=(2400, 1800), name="cover.png")
+
+            response = self.client.post(reverse("music_add"), {
+                "barcode": "999999999999",
+                "catalog_number": "",
+                "label": "",
+                "artist": "Test Artist",
+                "title": "Test Driven Album",
+                "format": "Vinyl",
+                "format_details": "",
+                "year": "",
+                "genre": "",
+                "description": "",
+                "media_condition": "vg_plus",
+                "sleeve_condition": "good",
+                "price": "",
+                "image_url": "",
+                "quantity": 1,
+                "status": "in_stock",
+                "record_available": "on",
+                "condition_photo": photo,
+            })
+
+            self.assertEqual(response.status_code, 302)
+            record = Record.objects.get(barcode="999999999999")
+            self.assertTrue(record.condition_photo.name.endswith(".jpg"))
+            self.assertTrue(record.condition_photo.storage.exists(record.condition_photo.name))

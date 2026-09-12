@@ -258,6 +258,22 @@
             padding: 12px;
             border-radius: 10px;
         }
+
+        .condition-badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #3730a3;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin-bottom: 6px;
+        }
+
+        html.dark .condition-badge {
+            background: #312e81;
+            color: #e0e7ff;
+        }
     </style>
 
     <script>
@@ -354,6 +370,9 @@
                         <img class="card-img-top book-cover" src="{{ book.image_url }}" alt="{{ book.title }}">
                     </div>
                     <div class="card-body">
+                        {% if book.condition %}
+                        <span class="condition-badge">{{ book.get_condition_display }}</span>
+                        {% endif %}
                         <h5 class="card-title">{{book.title}} || {{book.author}}</h5>
                         {% if book.price is not None %}
                         <p class="card-text" style="color:rgb(45, 236, 7); font-weight:bold;">{{book.price}} NOK</p>

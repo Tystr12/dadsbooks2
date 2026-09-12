@@ -19,6 +19,7 @@ urlpatterns = [
     path("mobile-scan/", views.mobile_scan, name="mobile_scan"),
     path("mobile-search/", views.mobile_search, name="mobile_search"),
     path("book/<int:book_id>/", views.book_detail, name="book_detail"),
+    path("book/<int:book_id>/contact/", views.contact_seller, name="book_contact_seller"),
 
      path(
         "password-reset/",

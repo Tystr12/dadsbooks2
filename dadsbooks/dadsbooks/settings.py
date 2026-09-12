@@ -42,6 +42,10 @@ DISCOGS_CONSUMER_KEY = os.getenv("DISCOGS_CONSUMER_KEY")
 DISCOGS_CONSUMER_SECRET = os.getenv("DISCOGS_CONSUMER_SECRET")
 DISCOGS_USER_AGENT = os.getenv("DISCOGS_USER_AGENT", "DadsbooksMusicApp/1.0")
 
+# Where "contact the seller" inquiries get emailed. Defaults to the same
+# account used to send system emails (EMAIL_HOST_USER) if not set separately.
+DAD_CONTACT_EMAIL = os.getenv("DAD_CONTACT_EMAIL", EMAIL_HOST_USER)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -67,6 +71,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Must stay last: auto-deletes old uploaded files (e.g. condition photos)
+    # when they're replaced or a record is deleted, so disk usage doesn't
+    # quietly grow from orphaned files - important given the 5GB quota.
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
@@ -147,6 +155,14 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Uploaded condition photos live here. On PythonAnywhere this also needs a
+# "Static files" mapping in the Web tab: URL /media/ -> Directory
+# /home/<you>/dadsbooks2/dadsbooks/media (this setting alone is enough for
+# local `runserver` with DEBUG=True, but production WSGI needs that mapping
+# too, since Django itself doesn't serve media files outside of DEBUG).
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

@@ -1,5 +1,6 @@
 from django import forms
 from django.forms import ModelForm
+from .imaging import process_condition_photo_field
 from .models import Record
 
 
@@ -39,9 +40,23 @@ class RecordForm(ModelForm):
             "year",
             "genre",
             "description",
+            "media_condition",
+            "sleeve_condition",
+            "condition_photo",
             "price",
             "image_url",
             "quantity",
             "status",
             "record_available",
         ]
+
+    def clean_condition_photo(self):
+        return process_condition_photo_field(self.cleaned_data.get("condition_photo"))
+
+
+class InquiryForm(forms.Form):
+    name = forms.CharField(max_length=200)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
+    # Honeypot - see books/forms.py's InquiryForm for why.
+    website = forms.CharField(required=False, widget=forms.TextInput())

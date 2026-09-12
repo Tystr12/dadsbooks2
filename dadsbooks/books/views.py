@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Book
+from .models import Book, BookInquiry
 import requests
-from .forms import BarcodeForm, BookForm
+from .forms import BarcodeForm, BookForm, InquiryForm
 from django.conf import settings
 import jsonpickle
 from bs4 import BeautifulSoup
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 
 NOT_ADMIN_MESSAGE = 'You are not logged in as admin'
 
@@ -157,7 +159,7 @@ def add(request):
         return redirect("login")
 
     if request.method == "POST":
-        form = BookForm(request.POST)
+        form = BookForm(request.POST, request.FILES)
 
         if form.is_valid():
             new_book = form.save(commit=False)
@@ -314,7 +316,7 @@ def edit_book(request, book_id):
             messages.success(request, "Book deleted completely.")
             return redirect("dashboard")
 
-        form = BookForm(request.POST, instance=book)
+        form = BookForm(request.POST, request.FILES, instance=book)
         if form.is_valid():
             form.save()
             messages.success(request, "Book updated successfully.")
@@ -413,5 +415,52 @@ def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id, book_available=True)
 
     return render(request, "books/book_detail.html", {
-        "book": book
+        "book": book,
+        "inquiry_form": InquiryForm(),
     })
+
+
+def contact_seller(request, book_id):
+    """Lets an anonymous visitor message the site owner about a book, since
+    there's no buyer login system - just a name/email/message that gets
+    saved (visible in /admin/) and emailed to DAD_CONTACT_EMAIL best-effort."""
+    book = get_object_or_404(Book, id=book_id, book_available=True)
+
+    if request.method == "POST":
+        form = InquiryForm(request.POST)
+
+        if form.is_valid():
+            if form.cleaned_data["website"]:
+                # Honeypot tripped - a bot filled in a field real visitors
+                # never see. Pretend success, save and send nothing.
+                messages.success(request, "Message sent! Thanks for reaching out.")
+                return redirect("book_detail", book_id=book.id)
+
+            BookInquiry.objects.create(
+                book=book,
+                name=form.cleaned_data["name"],
+                email=form.cleaned_data["email"],
+                message=form.cleaned_data["message"],
+            )
+
+            try:
+                send_mail(
+                    subject=f'Inquiry about "{book.title}" on Gråskjegg Bøker',
+                    message=(
+                        f"From: {form.cleaned_data['name']} <{form.cleaned_data['email']}>\n\n"
+                        f"{form.cleaned_data['message']}\n\n"
+                        f"---\nItem: {book.title} by {book.author}\n"
+                        f"Link: {request.build_absolute_uri(reverse('book_detail', args=[book.id]))}"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.DAD_CONTACT_EMAIL],
+                    fail_silently=True,
+                )
+            except Exception:
+                pass  # the inquiry is already saved in the DB either way
+
+            messages.success(request, "Message sent! Thanks for reaching out.")
+        else:
+            messages.error(request, "Please fill in your name, email, and a message.")
+
+    return redirect("book_detail", book_id=book.id)

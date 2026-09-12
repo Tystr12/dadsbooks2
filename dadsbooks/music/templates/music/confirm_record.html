@@ -96,7 +96,7 @@
         {% endif %}
     </div>
 
-    <form method="post" action="{% url 'music_add' %}" class="confirm-form">
+    <form method="post" action="{% url 'music_add' %}" class="confirm-form" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
 

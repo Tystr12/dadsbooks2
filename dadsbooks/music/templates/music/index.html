@@ -369,6 +369,9 @@
                     </div>
                     <div class="card-body">
                         <span class="format-badge">{{ record.format }}</span>
+                        {% if record.media_condition %}
+                        <span class="format-badge">{{ record.get_media_condition_display }}</span>
+                        {% endif %}
                         <h5 class="card-title">{{ record.artist }} || {{ record.title }}</h5>
                         {% if record.price is not None %}
                         <p class="card-text" style="color:rgb(45, 236, 7); font-weight:bold;">{{ record.price }} NOK</p>

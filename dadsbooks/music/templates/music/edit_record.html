@@ -96,7 +96,7 @@
         {% endif %}
     </div>
 
-    <form method="post" class="edit-form">
+    <form method="post" class="edit-form" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
 

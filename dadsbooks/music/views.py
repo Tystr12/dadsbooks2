@@ -1,10 +1,13 @@
 import requests
+from django.conf import settings
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.urls import reverse
 
-from .models import Record
-from .forms import BarcodeForm, DiscogsSearchForm, RecordForm
+from .models import Record, RecordInquiry
+from .forms import BarcodeForm, DiscogsSearchForm, RecordForm, InquiryForm
 from . import discogs
 
 DISCOGS_ERROR_MESSAGE = "Could not reach Discogs right now. Please try again, or add the record manually."
@@ -177,7 +180,7 @@ def add(request):
         return redirect("login")
 
     if request.method == "POST":
-        form = RecordForm(request.POST)
+        form = RecordForm(request.POST, request.FILES)
 
         if form.is_valid():
             new_record = form.save(commit=False)
@@ -312,7 +315,7 @@ def edit_record(request, record_id):
             messages.success(request, "Record deleted completely.")
             return redirect("music_dashboard")
 
-        form = RecordForm(request.POST, instance=record)
+        form = RecordForm(request.POST, request.FILES, instance=record)
         if form.is_valid():
             form.save()
             messages.success(request, "Record updated successfully.")
@@ -417,4 +420,51 @@ def mobile_search(request):
 def record_detail(request, record_id):
     record = get_object_or_404(Record, id=record_id, record_available=True)
 
-    return render(request, "music/record_detail.html", {"record": record})
+    return render(request, "music/record_detail.html", {
+        "record": record,
+        "inquiry_form": InquiryForm(),
+    })
+
+
+def contact_seller(request, record_id):
+    """Lets an anonymous visitor message the site owner about a record,
+    since there's no buyer login system - mirrors books.views.contact_seller."""
+    record = get_object_or_404(Record, id=record_id, record_available=True)
+
+    if request.method == "POST":
+        form = InquiryForm(request.POST)
+
+        if form.is_valid():
+            if form.cleaned_data["website"]:
+                # Honeypot tripped - pretend success, save and send nothing.
+                messages.success(request, "Message sent! Thanks for reaching out.")
+                return redirect("music_record_detail", record_id=record.id)
+
+            RecordInquiry.objects.create(
+                record=record,
+                name=form.cleaned_data["name"],
+                email=form.cleaned_data["email"],
+                message=form.cleaned_data["message"],
+            )
+
+            try:
+                send_mail(
+                    subject=f'Inquiry about "{record}" on Gråskjegg Musikk',
+                    message=(
+                        f"From: {form.cleaned_data['name']} <{form.cleaned_data['email']}>\n\n"
+                        f"{form.cleaned_data['message']}\n\n"
+                        f"---\nItem: {record}\n"
+                        f"Link: {request.build_absolute_uri(reverse('music_record_detail', args=[record.id]))}"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.DAD_CONTACT_EMAIL],
+                    fail_silently=True,
+                )
+            except Exception:
+                pass  # the inquiry is already saved in the DB either way
+
+            messages.success(request, "Message sent! Thanks for reaching out.")
+        else:
+            messages.error(request, "Please fill in your name, email, and a message.")
+
+    return redirect("music_record_detail", record_id=record.id)

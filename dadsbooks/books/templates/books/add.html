@@ -70,7 +70,7 @@
 <h1>Add book manually</h1>
 
 {% if user.is_superuser %}
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
 
