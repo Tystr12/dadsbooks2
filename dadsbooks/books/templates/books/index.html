@@ -344,13 +344,12 @@
 
             {% for book in books %}
             {% if book.book_available == True %}
-
+        <a href="{% url 'book_detail' book.id %}" class="text-decoration-none text-dark">
             <div class="col-md-3 d-flex book-column">
                 <div class="card mb-4 w-100 h-100">
                     <div class="card-img-wrapper">
                         <img class="card-img-top book-cover" src="{{ book.image_url }}" alt="{{ book.title }}">
                     </div>
-                    <!--Figure out what object fit you want..-->
                     <div class="card-body">
                         <h5 class="card-title">{{book.title}} || {{book.author}}</h5>
                         {% if book.price is not None %}
@@ -359,6 +358,7 @@
                         <a href="{% url 'book_detail' book.id %}" class="btn btn-primary">View details</a>
                     </div>
                 </div>
+            </a>
 
             </div>
 
