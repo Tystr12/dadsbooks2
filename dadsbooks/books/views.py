@@ -464,3 +464,26 @@ def contact_seller(request, book_id):
             messages.error(request, "Please fill in your name, email, and a message.")
 
     return redirect("book_detail", book_id=book.id)
+
+
+def inquiries(request):
+    """Admin-facing inbox of "contact the seller" messages about books."""
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    inquiries = BookInquiry.objects.select_related("book").all()
+
+    return render(request, "books/inquiries.html", {"inquiries": inquiries})
+
+
+def delete_inquiry(request, inquiry_id):
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    inquiry = get_object_or_404(BookInquiry, id=inquiry_id)
+
+    if request.method == "POST":
+        inquiry.delete()
+        messages.success(request, "Message deleted.")
+
+    return redirect("book_inquiries")

@@ -211,3 +211,50 @@ class ConditionPhotoUploadEndToEndTests(TestCase):
             book = Book.objects.get(isbn="9781111111111")
             self.assertTrue(book.condition_photo.name.endswith(".jpg"))
             self.assertTrue(book.condition_photo.storage.exists(book.condition_photo.name))
+
+
+class MessagesInboxTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_superuser(
+            "inbox_test_admin", "admin4@example.com", "pw12345"
+        )
+        self.book = Book.objects.create(
+            isbn="9780099578079",
+            title="1Q84",
+            author="Haruki Murakami",
+            quantity=1,
+            status="in_stock",
+            book_available=True,
+        )
+        self.inquiry = BookInquiry.objects.create(
+            book=self.book,
+            name="Kari Nordmann",
+            email="kari@example.com",
+            message="Is this still available?",
+        )
+
+    def test_anonymous_users_redirected_to_login(self):
+        response = self.client.get(reverse("book_inquiries"))
+        self.assertRedirects(response, reverse("login"))
+
+    def test_superuser_sees_inquiry_list(self):
+        self.client.login(username="inbox_test_admin", password="pw12345")
+        response = self.client.get(reverse("book_inquiries"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Kari Nordmann")
+        self.assertContains(response, "Is this still available?")
+        self.assertContains(response, self.book.title)
+
+    def test_deleting_an_inquiry_removes_it(self):
+        self.client.login(username="inbox_test_admin", password="pw12345")
+        response = self.client.post(reverse("book_delete_inquiry", args=[self.inquiry.id]))
+
+        self.assertRedirects(response, reverse("book_inquiries"))
+        self.assertEqual(BookInquiry.objects.count(), 0)
+
+    def test_messages_link_appears_in_admin_nav(self):
+        self.client.login(username="inbox_test_admin", password="pw12345")
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertContains(response, reverse("book_inquiries"))

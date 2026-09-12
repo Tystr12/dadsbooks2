@@ -304,3 +304,51 @@ class ConditionPhotoUploadEndToEndTests(TestCase):
             record = Record.objects.get(barcode="999999999999")
             self.assertTrue(record.condition_photo.name.endswith(".jpg"))
             self.assertTrue(record.condition_photo.storage.exists(record.condition_photo.name))
+
+
+class MessagesInboxTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_superuser(
+            "inbox_test_admin_music", "admin5@example.com", "pw12345"
+        )
+        self.record = Record.objects.create(
+            artist="Nirvana",
+            title="Nevermind",
+            format="Vinyl",
+            barcode="720642442725",
+            quantity=1,
+            price=250,
+            record_available=True,
+        )
+        self.inquiry = RecordInquiry.objects.create(
+            record=self.record,
+            name="Kari Nordmann",
+            email="kari@example.com",
+            message="Is this still available?",
+        )
+
+    def test_anonymous_users_redirected_to_login(self):
+        response = self.client.get(reverse("music_inquiries"))
+        self.assertRedirects(response, reverse("login"))
+
+    def test_superuser_sees_inquiry_list(self):
+        self.client.login(username="inbox_test_admin_music", password="pw12345")
+        response = self.client.get(reverse("music_inquiries"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Kari Nordmann")
+        self.assertContains(response, "Is this still available?")
+        self.assertContains(response, "Nevermind")
+
+    def test_deleting_an_inquiry_removes_it(self):
+        self.client.login(username="inbox_test_admin_music", password="pw12345")
+        response = self.client.post(reverse("music_delete_inquiry", args=[self.inquiry.id]))
+
+        self.assertRedirects(response, reverse("music_inquiries"))
+        self.assertEqual(RecordInquiry.objects.count(), 0)
+
+    def test_messages_link_appears_in_admin_nav(self):
+        self.client.login(username="inbox_test_admin_music", password="pw12345")
+        response = self.client.get(reverse("music_dashboard"))
+
+        self.assertContains(response, reverse("music_inquiries"))

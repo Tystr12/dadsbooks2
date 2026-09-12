@@ -272,6 +272,7 @@
         <div>
             {% if user.is_authenticated %}
             <a class="btn btn-outline-primary" href="{% url 'dashboard' %}">Dashboard</a>
+            <a class="btn btn-outline-primary" href="{% url 'book_inquiries' %}">Messages</a>
             <a class="btn btn-outline-primary" href="{% url 'search' %}">Search</a>
             <a class="btn btn-outline-primary" href="{% url 'add' %}">Add book</a>
             <a class="btn btn-outline-secondary" href="/admin/">Admin</a>

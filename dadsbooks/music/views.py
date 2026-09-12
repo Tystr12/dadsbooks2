@@ -468,3 +468,26 @@ def contact_seller(request, record_id):
             messages.error(request, "Please fill in your name, email, and a message.")
 
     return redirect("music_record_detail", record_id=record.id)
+
+
+def inquiries(request):
+    """Admin-facing inbox of "contact the seller" messages about records."""
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    inquiries = RecordInquiry.objects.select_related("record").all()
+
+    return render(request, "music/inquiries.html", {"inquiries": inquiries})
+
+
+def delete_inquiry(request, inquiry_id):
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    inquiry = get_object_or_404(RecordInquiry, id=inquiry_id)
+
+    if request.method == "POST":
+        inquiry.delete()
+        messages.success(request, "Message deleted.")
+
+    return redirect("music_inquiries")

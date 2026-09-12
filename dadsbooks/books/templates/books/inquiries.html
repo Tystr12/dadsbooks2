@@ -1,0 +1,98 @@
+{% extends "books/base.html" %}
+
+{% block content %}
+
+<style>
+    .inquiry-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
+    }
+
+    .inquiry-meta {
+        color: #6b7280;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .inquiry-meta a {
+        font-weight: bold;
+    }
+
+    .inquiry-from {
+        margin: 0 0 8px 0;
+    }
+
+    .inquiry-message {
+        white-space: pre-wrap;
+        margin: 10px 0 14px 0;
+    }
+
+    .inquiry-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .inquiry-actions form {
+        margin: 0;
+    }
+
+    .inquiry-actions a,
+    .inquiry-actions button {
+        display: inline-block;
+        padding: 7px 14px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+    .btn-reply {
+        background: #f3f4f6;
+        color: #111827;
+    }
+
+    .btn-delete {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    html.dark .inquiry-card {
+        border-color: #374151;
+    }
+
+    html.dark .btn-reply {
+        background: #374151;
+        color: #e5e7eb;
+    }
+</style>
+
+<h1>Messages about your books</h1>
+
+{% if inquiries %}
+{% for inquiry in inquiries %}
+<div class="inquiry-card">
+    <div class="inquiry-meta">
+        About <a href="{% url 'book_detail' inquiry.book.id %}">{{ inquiry.book.title }}</a>
+        &middot; {{ inquiry.created_at|date:"d M Y, H:i" }}
+    </div>
+    <p class="inquiry-from"><strong>{{ inquiry.name }}</strong> &lt;{{ inquiry.email }}&gt;</p>
+    <div class="inquiry-message">{{ inquiry.message }}</div>
+    <div class="inquiry-actions">
+        <a class="btn-reply" href="mailto:{{ inquiry.email }}?subject=Re: {{ inquiry.book.title }}">Reply by email</a>
+        <form method="post" action="{% url 'book_delete_inquiry' inquiry.id %}"
+            onsubmit="return confirm('Delete this message?');">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete">Delete</button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<p>No messages yet.</p>
+{% endif %}
+
+{% endblock %}

@@ -17,6 +17,9 @@ urlpatterns = [
     path("record/<int:record_id>/", views.record_detail, name="music_record_detail"),
     path("record/<int:record_id>/contact/", views.contact_seller, name="music_contact_seller"),
 
+    path("messages/", views.inquiries, name="music_inquiries"),
+    path("messages/<int:inquiry_id>/delete/", views.delete_inquiry, name="music_delete_inquiry"),
+
     path("mobile-scan/", views.mobile_scan, name="music_mobile_scan"),
     path("mobile-search/", views.mobile_search, name="music_mobile_search"),
 ]
